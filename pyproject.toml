@@ -10,6 +10,12 @@ requires-python = ">=3.11"
 authors = [{ name = "Pealton / Amnon" }]
 dependencies = []
 
+# The package itself has NO runtime deps (it's CSS/JS/templates). Jinja2 is only
+# needed to render the macros — a dev/test concern — so it lives in an extra:
+#   pip install -e ".[test]" && python -m pytest
+[project.optional-dependencies]
+test = ["jinja2>=3", "pytest>=7"]
+
 # Both apps install this straight from GitHub. DISTRIBUTION = FLOAT NOW, PIN AT
 # LAUNCH (Amnon 2026-07-16): while neither app serves real users, they track
 # @main so one DS change reaches both on their next deploy. Switch both to a
