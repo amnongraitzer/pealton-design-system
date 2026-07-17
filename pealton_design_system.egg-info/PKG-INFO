@@ -1,6 +1,0 @@
-Metadata-Version: 2.4
-Name: pealton-design-system
-Version: 0.1.0
-Summary: Monday-inspired, framework-free design system for the Pealton apps (CSS tokens + component CSS + Jinja macros).
-Author: Pealton / Amnon
-Requires-Python: >=3.11
