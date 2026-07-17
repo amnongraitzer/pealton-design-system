@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pealton Design System — tokens (phase 1)</title>
+  <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
+  <style>
+    body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
+           margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
+    h1 { font-size: var(--pds-fs-7); font-weight: var(--pds-fw-heavy); margin: 0 0 var(--pds-sp-2); }
+    .lede { color: var(--pds-ink-soft); max-width: 62ch; margin: 0 0 var(--pds-sp-6); }
+    h2 { font-size: var(--pds-fs-4); font-weight: var(--pds-fw-bold); margin: var(--pds-sp-6) 0 var(--pds-sp-3);
+         padding-bottom: var(--pds-sp-2); border-bottom: 1px solid var(--pds-line); }
+    .grid { display: flex; flex-wrap: wrap; gap: var(--pds-sp-3); }
+    .sw { width: 128px; }
+    .sw .chip { height: 52px; border-radius: var(--pds-r); border: 1px solid rgba(0,0,0,.06);
+                box-shadow: var(--pds-shadow); }
+    .sw .name { font-size: var(--pds-fs-1); font-weight: var(--pds-fw-medium); margin-top: var(--pds-sp-2);
+                color: var(--pds-ink); }
+    .sw .val { font-size: var(--pds-fs-1); color: var(--pds-ink-faint); font-variant-numeric: tabular-nums; }
+    .pill { display: inline-flex; align-items: center; gap: 6px; color: #fff; font-weight: var(--pds-fw-bold);
+            font-size: var(--pds-fs-2); padding: 5px 12px; border-radius: var(--pds-r-sm); }
+    .card { background: var(--pds-panel); border: 1px solid var(--pds-line); border-radius: var(--pds-r-lg);
+            box-shadow: var(--pds-shadow); padding: var(--pds-sp-4); }
+    .sp-row { display: flex; align-items: flex-end; gap: var(--pds-sp-3); }
+    .sp-bar { background: var(--pds-primary); border-radius: var(--pds-r-sm); width: 28px; }
+    .sp-label { font-size: var(--pds-fs-1); color: var(--pds-ink-faint); text-align: center; margin-top: 4px; }
+    .type-row { margin: var(--pds-sp-2) 0; }
+    .radius-box { width: 72px; height: 56px; background: var(--pds-primary-wash);
+                  border: 2px solid var(--pds-primary); }
+    .note { color: var(--pds-ink-faint); font-size: var(--pds-fs-2); margin-top: var(--pds-sp-6);
+            border-top: 1px solid var(--pds-line); padding-top: var(--pds-sp-4); max-width: 70ch; }
+  </style>
+</head>
+<body>
+  <h1>Pealton Design System</h1>
+  <p class="lede">Phase 1 — the canonical token layer. Monday-inspired, light scale.
+    Every token below is a CSS custom property that both Pealton apps consume from a
+    single source. Components arrive in later phases.</p>
+
+  <h2>Brand &amp; ink</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:var(--pds-primary)"></div><div class="name">primary</div><div class="val">#6161FF</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-primary-ink)"></div><div class="name">primary-ink</div><div class="val">#4B4BD6</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-primary-wash)"></div><div class="name">primary-wash</div><div class="val">#F0F0FF</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-ink)"></div><div class="name">ink</div><div class="val">#181B34</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-ink-soft)"></div><div class="name">ink-soft</div><div class="val">#6B6F92</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-ink-faint)"></div><div class="name">ink-faint</div><div class="val">#9A9DBB</div></div>
+  </div>
+
+  <h2>Surfaces &amp; lines</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:var(--pds-bg)"></div><div class="name">bg (ground)</div><div class="val">#F0F3FF</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-panel)"></div><div class="name">panel</div><div class="val">#FFFFFF</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-panel-2)"></div><div class="name">panel-2</div><div class="val">#F7F9FF</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-line)"></div><div class="name">line</div><div class="val">#E7E8F2</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-line-soft)"></div><div class="name">line-soft</div><div class="val">#F0F1F8</div></div>
+  </div>
+
+  <h2>Status pills — candidate stages</h2>
+  <div class="grid" style="align-items:center">
+    <span class="pill" style="background:var(--pds-stage-new)">● חדש</span>
+    <span class="pill" style="background:var(--pds-stage-contacted)">● פניתי</span>
+    <span class="pill" style="background:var(--pds-stage-invited)">● זומן לראיון</span>
+    <span class="pill" style="background:var(--pds-stage-rejected)">● לא רלוונטי</span>
+    <span class="pill" style="background:var(--pds-stage-hired)">● התקבל</span>
+  </div>
+
+  <h2>Semantic</h2>
+  <div class="grid">
+    <div class="sw"><div class="chip" style="background:var(--pds-success)"></div><div class="name">success</div><div class="val">#00CA72</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-warn)"></div><div class="name">warn</div><div class="val">#FFCC00</div></div>
+    <div class="sw"><div class="chip" style="background:var(--pds-danger)"></div><div class="name">danger</div><div class="val">#FB275D</div></div>
+  </div>
+
+  <h2>Spacing scale (4px base)</h2>
+  <div class="sp-row">
+    <div><div class="sp-bar" style="height:var(--pds-sp-1)"></div><div class="sp-label">1 · 4</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-2)"></div><div class="sp-label">2 · 8</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-3)"></div><div class="sp-label">3 · 12</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-4)"></div><div class="sp-label">4 · 16</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-5)"></div><div class="sp-label">5 · 24</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-6)"></div><div class="sp-label">6 · 32</div></div>
+    <div><div class="sp-bar" style="height:var(--pds-sp-7)"></div><div class="sp-label">7 · 48</div></div>
+  </div>
+
+  <h2>Radius</h2>
+  <div class="grid">
+    <div><div class="radius-box" style="border-radius:var(--pds-r-sm)"></div><div class="sp-label">sm · 6</div></div>
+    <div><div class="radius-box" style="border-radius:var(--pds-r)"></div><div class="sp-label">base · 8</div></div>
+    <div><div class="radius-box" style="border-radius:var(--pds-r-lg)"></div><div class="sp-label">lg · 12</div></div>
+    <div><div class="radius-box" style="border-radius:var(--pds-r-pill)"></div><div class="sp-label">pill · 999</div></div>
+  </div>
+
+  <h2>Type scale</h2>
+  <div class="card">
+    <div class="type-row" style="font-size:var(--pds-fs-7);font-weight:var(--pds-fw-heavy)">Aa 30 — page title · פעלתון גרביטי</div>
+    <div class="type-row" style="font-size:var(--pds-fs-6);font-weight:var(--pds-fw-bold)">Aa 22 — page subhead</div>
+    <div class="type-row" style="font-size:var(--pds-fs-5);font-weight:var(--pds-fw-bold)">Aa 18 — drawer name</div>
+    <div class="type-row" style="font-size:var(--pds-fs-4);font-weight:var(--pds-fw-bold)">Aa 16 — section title</div>
+    <div class="type-row" style="font-size:var(--pds-fs-3)">Aa 14 — body / table cell (base)</div>
+    <div class="type-row" style="font-size:var(--pds-fs-2);color:var(--pds-ink-soft)">Aa 13 — secondary text</div>
+    <div class="type-row" style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">Aa 12 — caption</div>
+  </div>
+
+  <p class="note"><strong>Phase 1 scope.</strong> Tokens only. Rubik is self-hosted in
+    phase 2 (PLT-056) — until then this page shows the Hebrew fallback stack.
+    Components, macros, and the app rollout follow in PLT-057 … PLT-069.</p>
+</body>
+</html>

@@ -1,0 +1,25 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pealton-design-system"
+version = "0.1.0"
+description = "Monday-inspired, framework-free design system for the Pealton apps (CSS tokens + component CSS + Jinja macros)."
+requires-python = ">=3.11"
+authors = [{ name = "Pealton / Amnon" }]
+dependencies = []
+
+# Both apps install this straight from GitHub. DISTRIBUTION = FLOAT NOW, PIN AT
+# LAUNCH (Amnon 2026-07-16): while neither app serves real users, they track
+# @main so one DS change reaches both on their next deploy. Switch both to a
+# pinned tag (e.g. @v1.0.0) the moment either app goes live to real users.
+#   pip install "pealton-design-system @ git+https://github.com/amnongraitzer/pealton-design-system@main"
+
+[tool.setuptools]
+packages = ["pealton_design_system"]
+
+[tool.setuptools.package-data]
+# Ship the CSS (and, from phase 2, the Rubik font) + Jinja macros as package
+# data so a consuming app can mount static_dir() and load templates_dir().
+pealton_design_system = ["static/*", "static/**/*", "templates/*", "templates/**/*"]
