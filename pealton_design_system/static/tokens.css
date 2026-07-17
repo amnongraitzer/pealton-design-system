@@ -1,0 +1,97 @@
+/* ============================================================================
+ * Pealton Design System — canonical token layer (PLT-055, phase 1)
+ * Monday.com-inspired. Light scale only, by decision (Amnon 2026-07-16):
+ * the DS does NOT follow OS dark mode. Reproduces the Monday *look* on the
+ * apps' existing FastAPI + Jinja + vanilla-JS stack — no React, no Vibe.
+ *
+ * This is the ONE source of design tokens for BOTH Pealton apps. It replaces
+ * the HR app's 8 forked :root blocks and the real-estate app's ad-hoc values.
+ * Every component (later phases) styles THROUGH these tokens — never raw hex.
+ * ========================================================================== */
+
+:root {
+  color-scheme: light;                     /* pin form controls to light too */
+
+  /* ---- Brand ------------------------------------------------------------- */
+  --pds-primary:        #6161FF;           /* Monday purple — the one accent  */
+  --pds-primary-ink:    #4B4BD6;           /* hover / pressed                 */
+  --pds-primary-wash:   #F0F0FF;           /* tint: active nav, hover rows    */
+
+  /* ---- Ink (text) — neutrals biased toward the purple, not flat grey ----- */
+  --pds-ink:            #181B34;           /* primary text                    */
+  --pds-ink-soft:       #6B6F92;           /* secondary text                  */
+  --pds-ink-faint:      #9A9DBB;           /* captions, placeholders          */
+
+  /* ---- Surfaces + lines -------------------------------------------------- */
+  --pds-bg:             #F0F3FF;           /* app ground — Monday Light scale */
+  --pds-panel:          #FFFFFF;           /* cards, drawers, tables          */
+  --pds-panel-2:        #F7F9FF;           /* subtle raised / striped surface */
+  --pds-line:           #E7E8F2;           /* borders                         */
+  --pds-line-soft:      #F0F1F8;           /* hairlines, row separators       */
+
+  /* ---- Status pills — the signature Monday element.
+   *      Mapped to the HR candidate stages; the -wash variants back subtle
+   *      chips. Real-estate confidence bands reuse the same five hues.       */
+  --pds-stage-new:            #579BFC;  --pds-stage-new-wash:       #E8F1FF;  /* חדש            */
+  --pds-stage-contacted:      #A25DDC;  --pds-stage-contacted-wash: #F4ECFB;  /* פניתי          */
+  --pds-stage-invited:        #FDAB3D;  --pds-stage-invited-wash:   #FFF3E2;  /* זומן לראיון    */
+  --pds-stage-rejected:       #E2445C;  --pds-stage-rejected-wash:  #FDE8EC;  /* לא רלוונטי     */
+  --pds-stage-hired:          #00C875;  --pds-stage-hired-wash:     #E2F7EE;  /* התקבל          */
+
+  /* ---- Semantic (separate from the accent) ------------------------------- */
+  --pds-success:        #00CA72;
+  --pds-warn:           #FFCC00;
+  --pds-danger:         #FB275D;
+  --pds-danger-wash:    #FDE8EC;
+
+  /* ---- Spacing scale (4px base) — use these, never freehand px ----------- */
+  --pds-sp-1: 4px;
+  --pds-sp-2: 8px;
+  --pds-sp-3: 12px;
+  --pds-sp-4: 16px;
+  --pds-sp-5: 24px;
+  --pds-sp-6: 32px;
+  --pds-sp-7: 48px;
+
+  /* ---- Radius scale ------------------------------------------------------ */
+  --pds-r-sm:   6px;                        /* status pills, small controls   */
+  --pds-r:      8px;                        /* buttons, inputs — the default  */
+  --pds-r-lg:   12px;                       /* cards, panels, drawers         */
+  --pds-r-pill: 999px;                      /* chips, avatars, count badges   */
+
+  /* ---- Typography — Rubik (self-hosted in phase 2, PLT-056).
+   *      Hebrew-first fallback stack until then; RTL-safe.                   */
+  --pds-font: "Rubik", "Assistant", "Heebo", "Segoe UI", system-ui,
+              -apple-system, Arial, sans-serif;
+  --pds-fs-1: 12px;   /* captions, count badges          */
+  --pds-fs-2: 13px;   /* secondary text, chips           */
+  --pds-fs-3: 14px;   /* body / table cells (base)       */
+  --pds-fs-4: 16px;   /* section titles                  */
+  --pds-fs-5: 18px;   /* drawer name, card headers       */
+  --pds-fs-6: 22px;   /* page subhead                    */
+  --pds-fs-7: 30px;   /* page title                      */
+  --pds-fw-normal:   400;
+  --pds-fw-medium:   600;
+  --pds-fw-bold:     700;
+  --pds-fw-heavy:    800;
+  --pds-lh:          1.5;
+
+  /* ---- Elevation --------------------------------------------------------- */
+  --pds-shadow:    0 4px 14px rgba(24, 27, 52, 0.07);
+  --pds-shadow-lg: 0 10px 34px rgba(24, 27, 52, 0.13);
+  --pds-ring:      0 0 0 3px var(--pds-primary-wash);   /* focus ring         */
+
+  /* ---- Z-index scale — one ladder, no scattered magic numbers ------------ */
+  --pds-z-base:      1;
+  --pds-z-sticky:    20;    /* sticky table headers / topbar    */
+  --pds-z-dropdown:  40;    /* menus, column pickers            */
+  --pds-z-drawer:    50;    /* candidate / detail drawer        */
+  --pds-z-modal:     60;    /* modals + their backdrop          */
+
+  /* ---- Motion ------------------------------------------------------------ */
+  --pds-transition: 0.12s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root { --pds-transition: 0s; }
+}
