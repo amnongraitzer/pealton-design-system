@@ -1,0 +1,114 @@
+/* ============================================================================
+ * Pealton Design System — overlays (PLT-059, phase 5)
+ *   modal · drawer (slide-over)
+ *
+ * Built on the NATIVE <dialog> element opened with showModal(). That gives us,
+ * for free and correctly: a focus trap (the rest of the page is inert), Escape
+ * to close, and focus restored to the invoking element on close — no hand-rolled
+ * trap to get subtly wrong. The behaviour module (pds.js) only wires open/close
+ * and backdrop-click.
+ *
+ * Colour via --pds-* tokens only (no raw hex/rgb; the backdrop scrim is derived
+ * from --pds-ink with color-mix — no scrim token exists yet). RTL-correct via
+ * logical properties; the drawer flips edge + slide direction automatically.
+ * The close "×" is a temporary text glyph — it becomes an SVG icon in phase 68.
+ *
+ * ACCESSIBLE NAME (consumer markup, not enforceable in CSS): give each <dialog>
+ * aria-labelledby pointing at its .pds-dialog__title id, and give the close
+ * button an aria-label. The docs demo shows the pattern.
+ * ========================================================================== */
+
+/* -- shared: reset the UA chrome, apply DS surface + scrim ------------------ */
+.pds-modal,
+.pds-drawer {
+  padding: 0;                              /* padding lives on the inner body   */
+  border: none;
+  background: var(--pds-panel);
+  color: var(--pds-ink);
+  box-shadow: var(--pds-shadow-lg);
+  /* the top layer handles stacking — no z-index needed */
+}
+.pds-modal::backdrop,
+.pds-drawer::backdrop {
+  background: color-mix(in srgb, var(--pds-ink) 45%, transparent);
+}
+
+/* -- modal: centered card -------------------------------------------------- */
+.pds-modal {
+  inline-size: min(560px, calc(100vw - var(--pds-sp-6)));
+  max-block-size: 85dvh;
+  border-radius: var(--pds-r-lg);
+}
+.pds-modal[open] { display: flex; flex-direction: column; }   /* [open] only, so closed stays display:none */
+
+/* -- drawer: slide-over pinned to the inline-end edge, full height ---------- */
+.pds-drawer {
+  margin-block: 0;
+  margin-inline-start: auto;               /* push to the inline-end edge (flips in RTL) */
+  margin-inline-end: 0;
+  inline-size: min(420px, 100%);
+  block-size: 100dvh;
+  max-block-size: 100dvh;
+  border-start-start-radius: var(--pds-r-lg);   /* round only the inner corners */
+  border-end-start-radius: var(--pds-r-lg);
+}
+.pds-drawer[open] { display: flex; flex-direction: column; }
+
+/* -- inner scaffold (shared) ----------------------------------------------- */
+.pds-dialog__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--pds-sp-3);
+  padding-block: var(--pds-sp-4);
+  padding-inline: var(--pds-sp-5);
+  border-block-end: 1px solid var(--pds-line);
+}
+.pds-dialog__title { margin: 0; font-size: var(--pds-fs-5); font-weight: var(--pds-fw-bold); }
+.pds-dialog__body {
+  flex: 1 1 auto;
+  overflow: auto;
+  padding-block: var(--pds-sp-5);
+  padding-inline: var(--pds-sp-5);
+}
+.pds-dialog__footer {
+  display: flex;
+  gap: var(--pds-sp-3);
+  justify-content: flex-end;
+  padding-block: var(--pds-sp-4);
+  padding-inline: var(--pds-sp-5);
+  border-block-start: 1px solid var(--pds-line);
+}
+
+/* close affordance — temporary text glyph until the icon phase (68) */
+.pds-dialog__close {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  color: var(--pds-ink-soft);
+  font-size: var(--pds-fs-6);
+  line-height: 1;
+  padding: var(--pds-sp-1);
+  border-radius: var(--pds-r-sm);
+}
+.pds-dialog__close:hover { background: var(--pds-panel-2); color: var(--pds-ink); }
+.pds-dialog__close:focus-visible { outline: 2px solid var(--pds-primary); outline-offset: 2px; }
+
+/* -- entrance motion (disabled under reduced-motion) ----------------------- */
+@keyframes pds-backdrop-in { from { opacity: 0; }               to { opacity: 1; } }
+@keyframes pds-modal-in    { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+@keyframes pds-drawer-in   { from { opacity: 0; transform: translateX(100%); } to { opacity: 1; transform: none; } }
+@keyframes pds-drawer-in-rtl { from { opacity: 0; transform: translateX(-100%); } to { opacity: 1; transform: none; } }
+
+.pds-modal[open]  { animation: pds-modal-in 0.16s ease; }
+.pds-drawer[open] { animation: pds-drawer-in 0.20s ease; }
+.pds-drawer[open]:dir(rtl) { animation: pds-drawer-in-rtl 0.20s ease; }
+.pds-modal[open]::backdrop,
+.pds-drawer[open]::backdrop { animation: pds-backdrop-in 0.16s ease; }
+
+@media (prefers-reduced-motion: reduce) {
+  .pds-modal[open],
+  .pds-drawer[open],
+  .pds-modal[open]::backdrop,
+  .pds-drawer[open]::backdrop { animation: none; }
+}

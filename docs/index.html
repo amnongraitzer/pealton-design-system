@@ -3,11 +3,12 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pealton Design System — tokens + Rubik + components + forms/table (phase 4)</title>
+  <title>Pealton Design System — tokens + Rubik + components + forms/table + overlays (phase 5)</title>
   <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
   <link rel="stylesheet" href="../pealton_design_system/static/components.css">
   <link rel="stylesheet" href="../pealton_design_system/static/forms.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/overlays.css">
   <!-- Tabulator base FIRST, then the DS theme so token overrides win (docs-only vendored copy, v6.3.1) -->
   <link rel="stylesheet" href="vendor/tabulator/tabulator.min.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tabulator.css">
@@ -233,6 +234,62 @@
   <div class="demo-label">RTL · selectable rows (hover + selected) · a status column reusing .pds-pill</div>
   <div id="demo-table" class="pds-tabulator"></div>
 
+  <h2>Overlays — modal &amp; drawer (phase 5)</h2>
+  <div class="demo-label">native &lt;dialog&gt; · focus trapped · Escape closes · focus returns to the opener · backdrop click closes</div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary" data-pds-open="demo-modal">פתח מודל</button>
+    <button class="pds-btn pds-btn--ghost" data-pds-open="demo-drawer">פתח מגירה</button>
+  </div>
+
+  <dialog class="pds-modal" id="demo-modal" dir="rtl" aria-labelledby="demo-modal-title">
+    <div class="pds-dialog__header">
+      <h3 class="pds-dialog__title" id="demo-modal-title">אישור פעולה</h3>
+      <button class="pds-dialog__close" data-pds-close aria-label="סגור">&times;</button>
+    </div>
+    <div class="pds-dialog__body">
+      <p style="margin-top:0;color:var(--pds-ink-soft)">להעביר את המועמד לשלב "זומן לראיון"? אפשר להוסיף הערה:</p>
+      <div class="pds-field">
+        <label class="pds-label" for="m-note">הערה</label>
+        <input class="pds-input" id="m-note" type="text" placeholder="לא חובה">
+      </div>
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox"> שלח עדכון במייל</label>
+    </div>
+    <div class="pds-dialog__footer">
+      <button class="pds-btn pds-btn--ghost" data-pds-close>ביטול</button>
+      <button class="pds-btn pds-btn--primary" data-pds-close>אישור</button>
+    </div>
+  </dialog>
+
+  <dialog class="pds-drawer" id="demo-drawer" dir="rtl" aria-labelledby="demo-drawer-title">
+    <div class="pds-dialog__header">
+      <h3 class="pds-dialog__title" id="demo-drawer-title">דנה כהן</h3>
+      <button class="pds-dialog__close" data-pds-close aria-label="סגור">&times;</button>
+    </div>
+    <div class="pds-dialog__body">
+      <div class="demo-row" style="margin-top:0">
+        <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>זומן לראיון</span>
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-phone">טלפון</label>
+        <input class="pds-input" id="d-phone" type="tel" value="050-1234567">
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-stage">שלב</label>
+        <select class="pds-select" id="d-stage">
+          <option>חדש</option><option selected>זומן לראיון</option><option>התקבל</option>
+        </select>
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-notes">הערות</label>
+        <textarea class="pds-textarea" id="d-notes" placeholder="הערות על המועמד…"></textarea>
+      </div>
+    </div>
+    <div class="pds-dialog__footer">
+      <button class="pds-btn pds-btn--ghost" data-pds-close>סגור</button>
+      <button class="pds-btn pds-btn--primary" data-pds-close>שמור</button>
+    </div>
+  </dialog>
+
   <h2>Rubik — self-hosted (phase 2)</h2>
   <div class="card type-samples">
     <div>
@@ -253,6 +310,9 @@
     CDN, offline-safe. This removes the silent Segoe-UI / system fallback both apps used
     to render. The banner above verifies Rubik actually rendered Hebrew.
     Components, macros, and the app rollout follow in PLT-057 … PLT-069.</p>
+
+  <!-- DS behaviour module (overlay open/close; native <dialog> does the focus trap) -->
+  <script src="../pealton_design_system/static/pds.js"></script>
 
   <!-- Tabulator base JS (docs-only vendored copy, v6.3.1) + DS-themed demo table -->
   <script src="vendor/tabulator/tabulator.min.js"></script>
