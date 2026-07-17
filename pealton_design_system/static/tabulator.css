@@ -1,0 +1,130 @@
+/* ============================================================================
+ * Pealton Design System — Tabulator theme (PLT-058, phase 4)
+ *
+ * A THEME layer, not a fork: load Tabulator's own base CSS first, then this file
+ * to recolour it through --pds-* tokens. Add class `pds-tabulator` to the element
+ * Tabulator initialises on (it also carries `.tabulator`), so every rule here is
+ * `.pds-tabulator.tabulator ...` — one class more specific than Tabulator's base
+ * chains, which reliably wins WITHOUT !important. Deep base chains (e.g. the col
+ * title, sorter arrow at 5 levels) are matched at the same depth below.
+ *
+ * Targets Tabulator v6.x. Colour/spacing/type via tokens only (no raw hex; only
+ * the keyword `white`). RTL is handled by Tabulator's own rtl option; this theme
+ * sets only colour + logical padding, which are direction-agnostic.
+ * ========================================================================== */
+
+/* -- table shell ----------------------------------------------------------- */
+.pds-tabulator.tabulator {
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-3);
+  color: var(--pds-ink);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-lg);
+}
+
+/* -- header ---------------------------------------------------------------- */
+.pds-tabulator.tabulator .tabulator-header {
+  background: var(--pds-panel-2);
+  border-block-end: 1px solid var(--pds-line);
+  color: var(--pds-ink-soft);
+  font-weight: var(--pds-fw-bold);
+  border-start-start-radius: var(--pds-r-lg);
+  border-start-end-radius: var(--pds-r-lg);
+}
+.pds-tabulator.tabulator .tabulator-header .tabulator-col {
+  background: var(--pds-panel-2);
+  border-inline-end: none;               /* drop Tabulator's default grey column rule */
+}
+.pds-tabulator.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-title {
+  color: var(--pds-ink-soft);
+  font-size: var(--pds-fs-2);
+  font-weight: var(--pds-fw-bold);
+}
+/* sort arrows (CSS triangles drawn with borders) */
+.pds-tabulator.tabulator .tabulator-header .tabulator-col .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
+  border-block-end-color: var(--pds-ink-faint);
+}
+.pds-tabulator.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="ascending"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow,
+.pds-tabulator.tabulator .tabulator-header .tabulator-col.tabulator-sortable[aria-sort="descending"] .tabulator-col-content .tabulator-col-sorter .tabulator-arrow {
+  border-block-end-color: var(--pds-primary);
+  border-block-start-color: var(--pds-primary);
+}
+/* header filter controls reuse the DS input look */
+.pds-tabulator.tabulator .tabulator-header .tabulator-col .tabulator-header-filter input,
+.pds-tabulator.tabulator .tabulator-header .tabulator-col .tabulator-header-filter textarea,
+.pds-tabulator.tabulator .tabulator-header .tabulator-col .tabulator-header-filter select {
+  font-family: var(--pds-font);
+  color: var(--pds-ink);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-sm);
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-2);
+}
+
+/* -- rows (flat white, horizontal hairline separators only — the Monday board
+ *    look: no vertical column rules, no striping) --------------------------- */
+.pds-tabulator.tabulator .tabulator-row {
+  background: var(--pds-panel);
+  border-block-end: 1px solid var(--pds-line-soft);
+  color: var(--pds-ink);
+}
+.pds-tabulator.tabulator .tabulator-row.tabulator-selectable:hover {
+  background: var(--pds-panel-2);
+}
+.pds-tabulator.tabulator .tabulator-row.tabulator-selected,
+.pds-tabulator.tabulator .tabulator-row.tabulator-selected:hover {
+  background: var(--pds-primary-wash);
+}
+.pds-tabulator.tabulator .tabulator-row .tabulator-cell {
+  padding-block: var(--pds-sp-2);
+  padding-inline: var(--pds-sp-3);
+  border-inline-end: none;               /* flat rows: no vertical cell rule */
+}
+/* round the table's bottom edge to match the container radius */
+.pds-tabulator.tabulator .tabulator-footer,
+.pds-tabulator.tabulator .tabulator-row:last-child {
+  border-end-start-radius: var(--pds-r-lg);
+  border-end-end-radius: var(--pds-r-lg);
+}
+/* last row carries no bottom hairline: the container border (no footer) or the
+ * footer's own top border (with footer) already separates it — avoids doubling */
+.pds-tabulator.tabulator .tabulator-row:last-child {
+  border-block-end: none;
+}
+/* keyboard focus is visible on rows, cells (if the app enables cell nav) and the
+ * pagination buttons — WCAG 2.4.7 */
+.pds-tabulator.tabulator .tabulator-row:focus-visible,
+.pds-tabulator.tabulator .tabulator-row .tabulator-cell:focus-visible {
+  outline: 2px solid var(--pds-primary);
+  outline-offset: -2px;
+}
+
+/* -- footer / pagination --------------------------------------------------- */
+.pds-tabulator.tabulator .tabulator-footer {
+  background: var(--pds-panel-2);
+  border-block-start: 1px solid var(--pds-line);
+  color: var(--pds-ink-soft);
+}
+.pds-tabulator.tabulator .tabulator-footer .tabulator-page {
+  font-family: var(--pds-font);
+  color: var(--pds-ink);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-sm);
+}
+.pds-tabulator.tabulator .tabulator-footer .tabulator-page:not(:disabled):hover {
+  background: var(--pds-primary-wash);
+  color: var(--pds-primary-ink);
+  border-color: var(--pds-primary);
+}
+.pds-tabulator.tabulator .tabulator-footer .tabulator-page:focus-visible {
+  outline: 2px solid var(--pds-primary);
+  outline-offset: 2px;
+}
+.pds-tabulator.tabulator .tabulator-footer .tabulator-page.active {
+  background: var(--pds-primary);
+  color: white;
+  border-color: var(--pds-primary);
+}

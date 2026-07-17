@@ -3,10 +3,14 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pealton Design System — tokens + Rubik + components (phase 3)</title>
+  <title>Pealton Design System — tokens + Rubik + components + forms/table (phase 4)</title>
   <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
   <link rel="stylesheet" href="../pealton_design_system/static/components.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/forms.css">
+  <!-- Tabulator base FIRST, then the DS theme so token overrides win (docs-only vendored copy, v6.3.1) -->
+  <link rel="stylesheet" href="vendor/tabulator/tabulator.min.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/tabulator.css">
   <style>
     body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
            margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
@@ -49,6 +53,9 @@
                   font-weight: var(--pds-fw-medium); margin-top: var(--pds-sp-3); }
     .demo-cards { display: flex; flex-wrap: wrap; gap: var(--pds-sp-4); align-items: stretch; }
     .demo-cards .pds-card { width: 220px; }
+    .demo-form { max-width: 420px; }
+    .demo-form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pds-sp-4); max-width: 620px; }
+    #demo-table { max-width: 760px; margin-top: var(--pds-sp-3); }
   </style>
 </head>
 <body>
@@ -189,6 +196,43 @@
     </div>
   </div>
 
+  <h2>Form controls (phase 4)</h2>
+  <div class="demo-label">one focus treatment · normal / disabled / invalid</div>
+  <div class="demo-form" dir="rtl">
+    <div class="pds-field">
+      <label class="pds-label" for="f-name">שם מלא <span class="pds-req">*</span></label>
+      <input class="pds-input" id="f-name" type="text" placeholder="לדוגמה: דנה כהן">
+      <div class="pds-help">כפי שמופיע בתעודת הזהות</div>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-role">משרה</label>
+      <select class="pds-select" id="f-role">
+        <option>מפתח/ת</option><option>מעצב/ת</option><option>מוצר</option>
+      </select>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-notes">הערות</label>
+      <textarea class="pds-textarea" id="f-notes" placeholder="הערות חופשיות…"></textarea>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-mail">דוא״ל (מצב שגיאה)</label>
+      <input class="pds-input pds-input--invalid" id="f-mail" type="email" value="not-an-email">
+      <div class="pds-error">כתובת דוא״ל לא תקינה</div>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-dis">שדה מושבת</label>
+      <input class="pds-input" id="f-dis" type="text" value="לא ניתן לעריכה" disabled>
+    </div>
+    <div class="pds-field">
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox" checked> מועמד/ת פעיל/ה</label><br>
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox" disabled> מסומן ומושבת</label>
+    </div>
+  </div>
+
+  <h2>Table — Tabulator, DS-themed (phase 4)</h2>
+  <div class="demo-label">RTL · selectable rows (hover + selected) · a status column reusing .pds-pill</div>
+  <div id="demo-table" class="pds-tabulator"></div>
+
   <h2>Rubik — self-hosted (phase 2)</h2>
   <div class="card type-samples">
     <div>
@@ -209,6 +253,45 @@
     CDN, offline-safe. This removes the silent Segoe-UI / system fallback both apps used
     to render. The banner above verifies Rubik actually rendered Hebrew.
     Components, macros, and the app rollout follow in PLT-057 … PLT-069.</p>
+
+  <!-- Tabulator base JS (docs-only vendored copy, v6.3.1) + DS-themed demo table -->
+  <script src="vendor/tabulator/tabulator.min.js"></script>
+  <script>
+    (function () {
+      var STAGE = {
+        new:       { cls: 'new',       label: 'חדש' },
+        contacted: { cls: 'contacted', label: 'פניתי' },
+        invited:   { cls: 'invited',   label: 'זומן לראיון' },
+        rejected:  { cls: 'rejected',  label: 'לא רלוונטי' },
+        hired:     { cls: 'hired',     label: 'התקבל' }
+      };
+      function pill(cell) {
+        var s = STAGE[cell.getValue()] || STAGE.new;
+        return '<span class="pds-pill pds-pill--' + s.cls + '">' +
+               '<span class="pds-pill__dot"></span>' + s.label + '</span>';
+      }
+      window.__pdsTable = new Tabulator('#demo-table', {
+        textDirection: 'rtl',
+        layout: 'fitColumns',
+        selectableRows: true,
+        pagination: 'local',
+        paginationSize: 3,
+        paginationCounter: 'rows',
+        data: [
+          { name: 'דנה כהן',    role: 'מפתחת',  status: 'new' },
+          { name: 'יוסי לוי',    role: 'מעצב',   status: 'contacted' },
+          { name: 'מאיה בר',     role: 'מוצר',   status: 'invited' },
+          { name: 'אבי שלום',    role: 'מפתח',   status: 'rejected' },
+          { name: 'נועה אזולאי', role: 'מעצבת',  status: 'hired' }
+        ],
+        columns: [
+          { title: 'שם', field: 'name', widthGrow: 2 },
+          { title: 'משרה', field: 'role', widthGrow: 1 },
+          { title: 'סטטוס', field: 'status', widthGrow: 2, formatter: pill, hozAlign: 'right' }
+        ]
+      });
+    })();
+  </script>
 
   <script>
     // Postcondition (PLT-056): Rubik must actually render Hebrew after fonts load.

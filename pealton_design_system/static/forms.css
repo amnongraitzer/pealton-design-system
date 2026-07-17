@@ -1,0 +1,103 @@
+/* ============================================================================
+ * Pealton Design System — form controls (PLT-058, phase 4)
+ *   input · select · textarea · checkbox · field/label/help/error
+ *
+ * ONE focus treatment for every control (a 2px solid --pds-primary outline,
+ * matching the phase-3 buttons) — replacing the two competing treatments the
+ * apps ship today (box-shadow on some inputs, outline on others).
+ *
+ * Colour only from --pds-* tokens (no raw hex; keyword `white`/`transparent`
+ * only). Classes `pds-` prefixed so they never collide with app CSS.
+ * RTL-safe: logical properties throughout.
+ * ========================================================================== */
+
+/* -- field scaffold -------------------------------------------------------- */
+.pds-field { display: block; margin-block-end: var(--pds-sp-4); }
+.pds-label {
+  display: block;
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-2);
+  font-weight: var(--pds-fw-medium);
+  color: var(--pds-ink);
+  margin-block-end: var(--pds-sp-1);
+}
+.pds-label .pds-req { color: var(--pds-danger); margin-inline-start: var(--pds-sp-1); }
+.pds-help  { font-size: var(--pds-fs-1); color: var(--pds-ink-faint); margin-block-start: var(--pds-sp-1); }
+.pds-error { font-size: var(--pds-fs-1); color: var(--pds-danger);    margin-block-start: var(--pds-sp-1); }
+
+/* -- text controls --------------------------------------------------------- */
+.pds-input,
+.pds-select,
+.pds-textarea {
+  box-sizing: border-box;
+  inline-size: 100%;
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-3);
+  line-height: var(--pds-lh);
+  color: var(--pds-ink);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r);
+  padding-block: var(--pds-sp-2);
+  padding-inline: var(--pds-sp-3);
+  transition: border-color var(--pds-transition), outline-color var(--pds-transition);
+}
+.pds-input::placeholder,
+.pds-textarea::placeholder { color: var(--pds-ink-faint); }
+
+.pds-textarea { min-block-size: calc(var(--pds-sp-7) + var(--pds-sp-6)); resize: vertical; }
+.pds-select   { cursor: pointer; }   /* native arrow kept — custom arrow is the icon phase */
+
+/* THE single focus treatment (text fields match :focus-visible on click too) */
+.pds-input:focus-visible,
+.pds-select:focus-visible,
+.pds-textarea:focus-visible {
+  outline: 2px solid var(--pds-primary);
+  outline-offset: 1px;
+  border-color: var(--pds-primary);
+}
+
+/* disabled */
+.pds-input:disabled,
+.pds-select:disabled,
+.pds-textarea:disabled {
+  background: var(--pds-panel-2);
+  color: var(--pds-ink-faint);
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+/* invalid — explicit ARIA/alias AND native validation via :user-invalid
+ * (:user-invalid fires only AFTER interaction, so fields aren't red on load) */
+.pds-input--invalid,
+.pds-input[aria-invalid="true"],  .pds-select[aria-invalid="true"],  .pds-textarea[aria-invalid="true"],
+.pds-input:user-invalid,          .pds-select:user-invalid,          .pds-textarea:user-invalid {
+  border-color: var(--pds-danger);
+}
+.pds-input--invalid:focus-visible,
+.pds-input[aria-invalid="true"]:focus-visible,  .pds-select[aria-invalid="true"]:focus-visible,  .pds-textarea[aria-invalid="true"]:focus-visible,
+.pds-input:user-invalid:focus-visible,          .pds-select:user-invalid:focus-visible,          .pds-textarea:user-invalid:focus-visible {
+  outline-color: var(--pds-danger);
+  border-color: var(--pds-danger);
+}
+
+/* -- checkbox — native input tinted with accent-color (minimal, accessible;
+ *    a custom check glyph belongs to the icon phase) ------------------------ */
+.pds-check {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pds-sp-2);
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-3);
+  color: var(--pds-ink);
+  cursor: pointer;
+}
+.pds-checkbox {
+  inline-size: var(--pds-sp-4);
+  block-size: var(--pds-sp-4);
+  accent-color: var(--pds-primary);
+  cursor: pointer;
+}
+.pds-checkbox:focus-visible { outline: 2px solid var(--pds-primary); outline-offset: 2px; }
+.pds-checkbox:disabled { cursor: not-allowed; opacity: 0.6; }
+.pds-check:has(.pds-checkbox:disabled) { color: var(--pds-ink-faint); cursor: not-allowed; }
