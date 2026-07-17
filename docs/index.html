@@ -3,9 +3,10 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pealton Design System — tokens + Rubik (phase 2)</title>
+  <title>Pealton Design System — tokens + Rubik + components (phase 3)</title>
   <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/components.css">
   <style>
     body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
            margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
@@ -42,6 +43,12 @@
     .type-samples .heb { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
     .type-samples .lat { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
     .type-samples .weights span { margin-inline-end: var(--pds-sp-3); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--pds-sp-3); align-items: center;
+                margin: var(--pds-sp-3) 0; }
+    .demo-label { width: 100%; font-size: var(--pds-fs-1); color: var(--pds-ink-faint);
+                  font-weight: var(--pds-fw-medium); margin-top: var(--pds-sp-3); }
+    .demo-cards { display: flex; flex-wrap: wrap; gap: var(--pds-sp-4); align-items: stretch; }
+    .demo-cards .pds-card { width: 220px; }
   </style>
 </head>
 <body>
@@ -115,6 +122,71 @@
     <div class="type-row" style="font-size:var(--pds-fs-3)">Aa 14 — body / table cell (base)</div>
     <div class="type-row" style="font-size:var(--pds-fs-2);color:var(--pds-ink-soft)">Aa 13 — secondary text</div>
     <div class="type-row" style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">Aa 12 — caption</div>
+  </div>
+
+  <h2>Buttons (phase 3)</h2>
+  <div class="demo-label">variants · sizes · states</div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary">ראשי</button>
+    <button class="pds-btn pds-btn--ghost">משני</button>
+    <button class="pds-btn pds-btn--danger">מחיקה</button>
+    <button class="pds-btn">רגיל</button>
+  </div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary pds-btn--sm">Small</button>
+    <button class="pds-btn pds-btn--primary">Default</button>
+    <button class="pds-btn pds-btn--primary pds-btn--lg">Large</button>
+  </div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary" disabled>Disabled</button>
+    <button class="pds-btn pds-btn--ghost" disabled>Disabled</button>
+    <a href="#buttons" class="pds-btn pds-btn--ghost">קישור כפתור</a>
+    <span style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">↹ Tab to a button to see the focus ring</span>
+  </div>
+
+  <h2>Chips</h2>
+  <div class="demo-row">
+    <span class="pds-chip">42 מועמדים</span>
+    <span class="pds-chip pds-chip--primary">מסונן</span>
+    <span class="pds-chip">Tel&nbsp;Aviv</span>
+  </div>
+
+  <h2>Status pills — the signature element</h2>
+  <div class="demo-label">soft (default, AA-legible) — HR candidate stages</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--new"><span class="pds-pill__dot"></span>חדש</span>
+    <span class="pds-pill pds-pill--contacted"><span class="pds-pill__dot"></span>פניתי</span>
+    <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>זומן לראיון</span>
+    <span class="pds-pill pds-pill--rejected"><span class="pds-pill__dot"></span>לא רלוונטי</span>
+    <span class="pds-pill pds-pill--hired"><span class="pds-pill__dot"></span>התקבל</span>
+  </div>
+  <div class="demo-label">solid (bold) — same five hues, dark ink text keeps it AA-legible</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--solid pds-pill--new">חדש</span>
+    <span class="pds-pill pds-pill--solid pds-pill--contacted">פניתי</span>
+    <span class="pds-pill pds-pill--solid pds-pill--invited">זומן</span>
+    <span class="pds-pill pds-pill--solid pds-pill--rejected">לא רלוונטי</span>
+    <span class="pds-pill pds-pill--solid pds-pill--hired">התקבל</span>
+  </div>
+  <div class="demo-label">real-estate confidence bands — REUSE the same five hues (no new colours)</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--hired"><span class="pds-pill__dot"></span>ודאות גבוהה</span>
+    <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>ודאות בינונית</span>
+    <span class="pds-pill pds-pill--rejected"><span class="pds-pill__dot"></span>ודאות נמוכה</span>
+    <span class="pds-pill pds-pill--new"><span class="pds-pill__dot"></span>מאומת</span>
+    <span class="pds-pill pds-pill--contacted"><span class="pds-pill__dot"></span>סתירה</span>
+  </div>
+
+  <h2>Cards</h2>
+  <div class="demo-cards">
+    <div class="pds-card">
+      <div style="font-size:var(--pds-fs-5);font-weight:var(--pds-fw-bold)">כרטיס רגיל</div>
+      <p style="color:var(--pds-ink-soft);margin:var(--pds-sp-2) 0 0">משטח לבן שטוח, פינה אחת, צל אחד.</p>
+    </div>
+    <div class="pds-card pds-card--hover" tabindex="0">
+      <div style="font-size:var(--pds-fs-5);font-weight:var(--pds-fw-bold)">כרטיס עם ריחוף</div>
+      <p style="color:var(--pds-ink-soft);margin:var(--pds-sp-2) 0 0">מרחף מעט בריחוף או במיקוד.</p>
+    </div>
   </div>
 
   <h2>Rubik — self-hosted (phase 2)</h2>
