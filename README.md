@@ -9,14 +9,20 @@ Epic 0 ruled out).
 > Built by Epic 2 (PLT-054). Decisions: `Pealton/Project knowledge/PLT-EPIC2-unified-design-system.md`.
 > Live prototype: https://claude.ai/code/artifact/d327b80e-3b96-4b89-9641-daede90db4ea
 
-## Status — phase 1 (PLT-055)
-The **canonical token layer** only: `pealton_design_system/static/tokens.css`
-(one `:root` for colour / spacing / type / radius / z-index / shadow, Monday
-palette, **light scale only**). See it: open `docs/index.html`.
+## Status — phase 2 (PLT-056)
+- **Tokens** (PLT-055): `pealton_design_system/static/tokens.css` — one `:root`
+  for colour / spacing / type / radius / z-index / shadow, Monday palette,
+  **light scale only**.
+- **Rubik, self-hosted** (PLT-056): `static/fonts.css` + `static/fonts/*.woff2`
+  (SIL OFL, variable weight **300–900**, Hebrew + Latin subsets, ~44 KB). Ships
+  **inside the package** — no CDN, offline-safe. This removes the silent
+  Segoe-UI / per-OS fallback both apps shipped. Load `fonts.css` alongside
+  `tokens.css`; the `--pds-font` token already lists Rubik first.
 
-Later phases: Rubik self-host (PLT-056) · components (057–059) · macros +
-docs (060) · distribution wired into both apps (061) · HR pilot + legacy
-rollout (062–067) · icons (068–069).
+See it: open `docs/index.html` (the banner verifies Rubik rendered Hebrew).
+
+Later phases: components (057–059) · macros + docs (060) · distribution wired
+into both apps (061) · HR pilot + legacy rollout (062–067) · icons (068–069).
 
 ## Design decisions (locked)
 - **Look:** Monday-inspired; primary `#6161FF`, the five colored **stage pills**

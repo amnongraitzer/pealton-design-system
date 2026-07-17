@@ -3,7 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pealton Design System — tokens (phase 1)</title>
+  <title>Pealton Design System — tokens + Rubik (phase 2)</title>
+  <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
   <style>
     body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
@@ -31,13 +32,25 @@
                   border: 2px solid var(--pds-primary); }
     .note { color: var(--pds-ink-faint); font-size: var(--pds-fs-2); margin-top: var(--pds-sp-6);
             border-top: 1px solid var(--pds-line); padding-top: var(--pds-sp-4); max-width: 70ch; }
+    .font-check { display: inline-block; font-size: var(--pds-fs-2); font-weight: var(--pds-fw-medium);
+                  padding: var(--pds-sp-2) var(--pds-sp-3); border-radius: var(--pds-r);
+                  margin: 0 0 var(--pds-sp-5); background: var(--pds-panel-2); color: var(--pds-ink-soft);
+                  border: 1px solid var(--pds-line); }
+    .font-check.ok   { background: var(--pds-stage-hired-wash); color: #0a7a4d; border-color: #b6e6d1; }
+    .font-check.fail { background: var(--pds-danger-wash);      color: #a11238; border-color: #f3b6c5; }
+    .type-samples { display: flex; flex-wrap: wrap; gap: var(--pds-sp-5); align-items: baseline; }
+    .type-samples .heb { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
+    .type-samples .lat { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
+    .type-samples .weights span { margin-inline-end: var(--pds-sp-3); }
   </style>
 </head>
 <body>
   <h1>Pealton Design System</h1>
-  <p class="lede">Phase 1 — the canonical token layer. Monday-inspired, light scale.
-    Every token below is a CSS custom property that both Pealton apps consume from a
-    single source. Components arrive in later phases.</p>
+  <p class="lede">Phases 1–2 — the canonical token layer + self-hosted <strong>Rubik</strong>.
+    Monday-inspired, light scale. Every token below is a CSS custom property that both
+    Pealton apps consume from a single source. Components arrive in later phases.</p>
+
+  <div id="font-check" class="font-check" role="status">בודק את גופן רוביק… — checking Rubik…</div>
 
   <h2>Brand &amp; ink</h2>
   <div class="grid">
@@ -104,8 +117,41 @@
     <div class="type-row" style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">Aa 12 — caption</div>
   </div>
 
-  <p class="note"><strong>Phase 1 scope.</strong> Tokens only. Rubik is self-hosted in
-    phase 2 (PLT-056) — until then this page shows the Hebrew fallback stack.
+  <h2>Rubik — self-hosted (phase 2)</h2>
+  <div class="card type-samples">
+    <div>
+      <div class="heb" lang="he" dir="rtl">פְּעַלְתּוֹן — מערכת הגיוס</div>
+      <div class="lat">Pealton — Rubik 0123456789</div>
+    </div>
+    <div class="weights" style="font-size:var(--pds-fs-5)">
+      <span style="font-weight:400">רגיל 400</span>
+      <span style="font-weight:600">בינוני 600</span>
+      <span style="font-weight:700">מודגש 700</span>
+      <span style="font-weight:800">כבד 800</span>
+    </div>
+  </div>
+
+  <p class="note"><strong>Phase 2 (PLT-056).</strong> Rubik (SIL OFL, variable weight
+    300–900, Hebrew + Latin subsets, ~44&nbsp;KB) now ships inside the package as
+    <code>static/fonts/*.woff2</code> and loads via <code>static/fonts.css</code> — no
+    CDN, offline-safe. This removes the silent Segoe-UI / system fallback both apps used
+    to render. The banner above verifies Rubik actually rendered Hebrew.
     Components, macros, and the app rollout follow in PLT-057 … PLT-069.</p>
+
+  <script>
+    // Postcondition (PLT-056): Rubik must actually render Hebrew after fonts load.
+    (function () {
+      var el = document.getElementById('font-check');
+      document.fonts.ready.then(function () {
+        var ok = document.fonts.check('800 16px Rubik', 'פעלתון');
+        el.textContent = ok
+          ? '✓ Rubik is rendering Hebrew (document.fonts.check(\'800 16px Rubik\',\'פעלתון\') = true)'
+          : '✗ Rubik did NOT load — still on the fallback stack';
+        el.classList.add(ok ? 'ok' : 'fail');
+        // expose for automated verification
+        window.__pdsRubikOk = ok;
+      });
+    })();
+  </script>
 </body>
 </html>

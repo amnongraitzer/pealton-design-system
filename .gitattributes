@@ -1,0 +1,5 @@
+# Font binaries must never be line-ending normalized.
+*.woff2 binary
+*.woff  binary
+*.ttf   binary
+*.otf   binary
