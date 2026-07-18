@@ -27,7 +27,7 @@ ALL_MACROS = """{% import "pds.html" as pds %}
 {{ pds.pill("פניתי", "contacted") }}
 {{ pds.pill("זומן", "invited") }}
 {{ pds.pill("לא רלוונטי", "rejected") }}
-{{ pds.pill("התקבל", "hired", solid=true) }}
+{{ pds.pill("התקבל", "hired", soft=true) }}
 {% call pds.card(hover=true) %}<p>תוכן כרטיס</p>{% endcall %}
 {{ pds.input("full_name", placeholder="שם מלא") }}
 {{ pds.textarea("notes", placeholder="הערות") }}
@@ -48,7 +48,7 @@ def test_every_macro_renders_and_emits_its_class():
         "pds-btn--danger", "disabled",
         "pds-chip", "pds-chip--primary",
         "pds-pill pds-pill--new", "pds-pill__dot",
-        "pds-pill--solid pds-pill--hired",
+        "pds-pill--soft pds-pill--hired",
         "pds-card pds-card--hover",
         'class="pds-input"', 'name="full_name"',
         "pds-textarea", "pds-select", "<option selected>מעצב</option>",

@@ -11,15 +11,15 @@
  *    .btn / .chip / .card during rollout.
  *  - RTL-safe: logical properties + flex `gap`, never physical left/right.
  *
- * Design choices flagged for review (see PR body):
+ * Design choices (prototype-aligned; flagged in the PR body):
  *  - Focus ring = solid 2px --pds-primary outline (the --pds-ring token, a 3px
  *    primary-wash halo, is too faint for a WCAG 3:1 focus indicator).
- *  - Status pills use dark --pds-ink text (soft on a -wash tint, solid on the
- *    saturated hue). White-on-hue is NOT shipped: it misses AA text contrast on
- *    the lighter stages. A white-text `--bold` variant can be added on request.
- *  - .pds-btn--danger keeps white text on --pds-danger = 3.8:1, an AA miss that
- *    lives in the TOKEN value, not here. Flagged for a tokens revision (a darker
- *    danger, or a new --pds-danger-ink); not patched in this phase.
+ *  - Status pills: DEFAULT is solid saturated hue + dark --pds-ink text (the
+ *    prototype look, made legible — white-on-hue fails AA on the lighter stages).
+ *    A --soft (pale tint) variant is available for dense contexts.
+ *  - .pds-btn--danger is an OUTLINE button (red text + border on white, fills on
+ *    hover) to match the prototype. Its text is still 3.78:1 on white — a
+ *    token-level miss; a darker --pds-danger / a --pds-danger-ink fixes it.
  *  - Card radius = --pds-r-lg (12px) per the merged tokens; the direction doc's
  *    "8px" is superseded by the token.
  * ========================================================================== */
@@ -81,10 +81,20 @@
   color: var(--pds-primary-ink);
 }
 
-.pds-btn--danger { background: var(--pds-danger); color: white; font-weight: var(--pds-fw-bold); }
+/* Outline danger (prototype-aligned): red text + border on white, fills on hover.
+ * NOTE: --pds-danger text on white is 3.78:1 (contrast is symmetric, so this is
+ * NOT more AA-compliant than solid white-on-red — the miss lives in the token).
+ * The border is a non-text element and clears the 3:1 bar. A darker --pds-danger
+ * (or a --pds-danger-ink) in a tokens revision is what fully fixes the text. */
+.pds-btn--danger {
+  background: transparent;
+  color: var(--pds-danger);
+  border-color: var(--pds-danger);
+  font-weight: var(--pds-fw-bold);
+}
 .pds-btn--danger:hover:not(:disabled):not([aria-disabled="true"]) {
-  background: var(--pds-danger);         /* re-declared so the base hover can't leak */
-  filter: brightness(0.93);              /* no --pds-danger-ink token exists     */
+  background: var(--pds-danger);         /* fill on hover */
+  color: white;
 }
 
 /* pressed — applies to every variant, never when disabled */
@@ -122,9 +132,12 @@
 }
 
 /* ========================================================================== *
- *  STATUS PILL — the signature Monday element.
- *  Each stage modifier sets two local vars (--_c hue, --_w wash); the base and
- *  the --solid variant read them, so the hue lives in exactly one place.
+ *  STATUS PILL — the signature Monday element (prototype-aligned, Amnon 2026-07-18).
+ *  DEFAULT = SOLID saturated hue + DARK ink text (dark text keeps every stage
+ *  legible where white does not — new/invited/hired clear AA 4.5:1; purple
+ *  `contacted` + red `rejected` land ~4.1:1, still far better than white; only a
+ *  darker stage token would push those two over 4.5). Each stage modifier sets
+ *  two local vars (--_c hue, --_w wash) so the hue lives in exactly one place.
  * ========================================================================== */
 .pds-pill {
   display: inline-flex;
@@ -137,23 +150,22 @@
   padding-block: var(--pds-sp-1);
   padding-inline: var(--pds-sp-3);
   border-radius: var(--pds-r-sm);
-  background: var(--_w, var(--pds-panel-2));    /* soft tint (default)          */
+  background: var(--_c, var(--pds-ink-faint));  /* saturated hue (solid default) */
   color: var(--pds-ink);
 }
 .pds-pill__dot {
   inline-size: var(--pds-sp-2);
   block-size: var(--pds-sp-2);
   border-radius: var(--pds-r-pill);
-  background: var(--_c, var(--pds-ink-faint));
+  background: var(--pds-ink);          /* dark dot: visible on the hue, matches the text */
   flex: 0 0 auto;
 }
-/* solid = saturated hue, dark ink text (AA-legible at this bold, 14px size) */
-.pds-pill--solid {
-  background: var(--_c, var(--pds-ink-faint));
+/* soft = pale tint + hue dot, for dense or secondary contexts */
+.pds-pill--soft {
+  background: var(--_w, var(--pds-panel-2));
   color: var(--pds-ink);
-  font-size: var(--pds-fs-3);
 }
-.pds-pill--solid .pds-pill__dot { display: none; }
+.pds-pill--soft .pds-pill__dot { background: var(--_c, var(--pds-ink-faint)); }
 
 /* stage hues — map 1:1 to the token names. RE confidence bands REUSE these
  * (high→hired, medium→invited, low→rejected, verified→new, conflict→contacted). */

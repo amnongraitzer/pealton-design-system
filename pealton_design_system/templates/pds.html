@@ -22,9 +22,10 @@
 <span class="pds-chip{% if variant %} pds-chip--{{ variant }}{% endif %}">{{ label }}</span>
 {%- endmacro %}
 
-{#- Status pill. stage = new|contacted|invited|rejected|hired. solid = bold style -#}
-{% macro pill(label, stage, solid=false, dot=true) -%}
-<span class="pds-pill{% if solid %} pds-pill--solid{% endif %} pds-pill--{{ stage }}">{% if dot and not solid %}<span class="pds-pill__dot"></span>{% endif %}{{ label }}</span>
+{#- Status pill. stage = new|contacted|invited|rejected|hired.
+    Default = solid saturated hue + dark text; soft=true = pale tinted variant. -#}
+{% macro pill(label, stage, soft=false, dot=true) -%}
+<span class="pds-pill{% if soft %} pds-pill--soft{% endif %} pds-pill--{{ stage }}">{% if dot %}<span class="pds-pill__dot"></span>{% endif %}{{ label }}</span>
 {%- endmacro %}
 
 {#- Card. Body via {% call %}. hover = lift on hover/focus; flush = no padding -#}
