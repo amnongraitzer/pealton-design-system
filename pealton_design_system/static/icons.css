@@ -1,0 +1,26 @@
+/* ============================================================================
+   Pealton Design System — icons (PLT-068). ADDITIVE, standalone.
+
+   Sizing/alignment for the inline-SVG glyphs emitted by the icon() Jinja macro
+   (templates/pds.html). Colour comes from currentColor ONLY — no raw hex, no
+   token edits. RTL-first: uses CSS logical properties. Shipped automatically by
+   the existing static/* package-data glob.
+   ========================================================================== */
+
+.pds-icon {
+  inline-size: 1.25em;
+  block-size: 1.25em;
+  fill: currentColor;
+  vertical-align: middle;
+  flex: none;
+}
+
+.pds-icon--sm {
+  inline-size: 1em;
+  block-size: 1em;
+}
+
+.pds-icon--lg {
+  inline-size: 1.5em;
+  block-size: 1.5em;
+}
