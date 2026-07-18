@@ -84,3 +84,41 @@ def test_caller_content_is_escaped():
     html = render(src, evil="<script>alert(2)</script>")
     assert "<script>alert(2)</script>" not in html
     assert "&lt;script&gt;" in html
+
+
+# --- Icons (PLT-068) --------------------------------------------------------
+
+ICON_NAMES = [
+    "search", "caret", "close", "add", "document",
+    "star", "warning", "flag", "back", "forward",
+]
+
+
+def test_icon_renders_inline_svg_for_every_name():
+    """Each named glyph renders a self-contained inline <svg> with a <path>, the
+    pds-icon class, and NO external reference."""
+    for name in ICON_NAMES:
+        html = render('{% import "pds.html" as pds %}{{ pds.icon(name) }}', name=name)
+        assert "<svg" in html, f"icon '{name}' rendered no <svg>: {html!r}"
+        assert "pds-icon" in html, f"icon '{name}' missing pds-icon class: {html!r}"
+        assert "<path" in html, f"icon '{name}' has no <path>: {html!r}"
+        assert "http" not in html, f"icon '{name}' pulled an external reference: {html!r}"
+
+
+def test_icon_unknown_name_is_empty_and_safe():
+    """An unknown name must not raise and must produce no <svg> (safe lookup)."""
+    html = render('{% import "pds.html" as pds %}{{ pds.icon("nope") }}')
+    assert "<svg" not in html, f"unknown icon name leaked markup: {html!r}"
+    assert html.strip() == "", f"unknown icon name should be empty, got: {html!r}"
+
+
+def test_icon_label_is_escaped():
+    """A caller-supplied label is echoed only through autoescaped {{ }} — a
+    <script> payload must be neutralised, and aria-label must be present."""
+    html = render(
+        '{% import "pds.html" as pds %}{{ pds.icon("search", label=evil) }}',
+        evil="<script>alert(1)</script>",
+    )
+    assert "<script>" not in html, f"label was not escaped: {html!r}"
+    assert "&lt;script&gt;" in html, f"escaped label missing: {html!r}"
+    assert "aria-label" in html, f"labelled icon missing aria-label: {html!r}"

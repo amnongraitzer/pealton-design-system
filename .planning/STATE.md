@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 Phase: 6 of 9 complete (v1.0 Design System shipped)
 Plan: — (no plan in flight)
 Status: Initialized from existing code — ready to plan Phase 7 when chosen
-Last activity: 2026-07-18 — GSD initialized on existing repo; mapped codebase, reconstructed roadmap from git history (PLT-055→060)
+Last activity: 2026-07-18 — Completed quick task 260718-fwv: inline-SVG icon component (issue #3 / PLT-068)
 
 Progress: [██████▓░░░] 67%
 
@@ -64,6 +64,12 @@ None yet.
 
 - **Distribution pin reminder:** both apps track GitHub `@main`. Switch both to a
   pinned tag the moment *either* app goes live to real users.
+
+### Quick Tasks Completed
+
+| # | Description | Date | Commit | Directory |
+|---|-------------|------|--------|-----------|
+| 260718-fwv | Inline-SVG icon component (Jinja macro + docs render) — issue #3 / PLT-068 | 2026-07-18 | 130109d | [260718-fwv-add-an-inline-svg-icon-component-jinja-m](./quick/260718-fwv-add-an-inline-svg-icon-component-jinja-m/) |
 
 ## Deferred Items
 
