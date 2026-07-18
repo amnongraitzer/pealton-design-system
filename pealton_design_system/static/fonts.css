@@ -1,0 +1,47 @@
+/* ============================================================================
+ * Pealton Design System — self-hosted Rubik (PLT-056, phase 2)
+ *
+ * WHY THIS EXISTS — kills a silent bug: both apps ship NO webfont on purpose,
+ * so Hebrew fell back to Segoe UI on Windows / something else on Mac — a look
+ * nobody chose. This ships Rubik (SIL OFL, free to embed) INSIDE the package,
+ * so the brand + all UI text render in Rubik, offline-safe, no CDN request.
+ *
+ * Rubik is the closest Hebrew analogue to Monday's Figtree (Figtree rejected —
+ * weak Hebrew coverage). Self-hosting != CDN: the .woff2 bytes travel in this
+ * package; the @font-face url() below is relative, so it resolves against the
+ * app's DS static mount (both apps load this via <link>).
+ *
+ * VARIABLE FONT: one file per subset covers the whole weight axis 300..900.
+ * (Rubik's real axis is 300-900 — NOT the 100-900 the task text guessed; 100
+ * is out of range and Google 400s it. The token weights used — 400/600/700/800
+ * — all sit inside 300-900, so nothing is lost.)
+ *
+ * The `--pds-font` token (tokens.css) already lists "Rubik" first with the
+ * Hebrew system stack (Assistant/Heebo/Segoe UI/system-ui) kept only as the
+ * fallback for the brief moment before the webfont loads (font-display: swap).
+ *
+ * Font: Rubik © 2015 The Rubik Project Authors — SIL OFL 1.1. See fonts/OFL.txt.
+ * ========================================================================== */
+
+/* ---- Hebrew subset (U+0590–05FF + Hebrew presentation forms) --------------- */
+@font-face {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 300 900;                       /* variable axis */
+  font-display: swap;
+  src: url("fonts/rubik-hebrew.woff2") format("woff2");
+  unicode-range: U+0307-0308, U+0590-05FF, U+200C-2010, U+20AA, U+25CC,
+                 U+FB1D-FB4F;
+}
+
+/* ---- Latin subset (ASCII, punctuation, currency, arrows, digits) ----------- */
+@font-face {
+  font-family: "Rubik";
+  font-style: normal;
+  font-weight: 300 900;                       /* variable axis */
+  font-display: swap;
+  src: url("fonts/rubik-latin.woff2") format("woff2");
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA,
+                 U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122,
+                 U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}

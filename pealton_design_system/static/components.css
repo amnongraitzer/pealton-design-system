@@ -1,0 +1,198 @@
+/* ============================================================================
+ * Pealton Design System — core components (PLT-057, phase 3)
+ *   button · chip · status-pill · card
+ *
+ * RULES honoured here:
+ *  - EVERY colour comes from a --pds-* token (tokens.css). No raw hex and no raw
+ *    colour-function literals. Only the CSS keywords `white`, `transparent`,
+ *    `currentColor` appear as literals. (Postcondition: the file contains zero
+ *    hex colour codes.)
+ *  - Classes are `pds-` prefixed so they never collide with the apps' existing
+ *    .btn / .chip / .card during rollout.
+ *  - RTL-safe: logical properties + flex `gap`, never physical left/right.
+ *
+ * Design choices (prototype-aligned; flagged in the PR body):
+ *  - Focus ring = solid 2px --pds-primary outline (the --pds-ring token, a 3px
+ *    primary-wash halo, is too faint for a WCAG 3:1 focus indicator).
+ *  - Status pills: DEFAULT is solid saturated hue + dark --pds-ink text (the
+ *    prototype look, made legible — white-on-hue fails AA on the lighter stages).
+ *    A --soft (pale tint) variant is available for dense contexts.
+ *  - .pds-btn--danger is an OUTLINE button (red text + border on white, fills on
+ *    hover) to match the prototype. Its text is still 3.78:1 on white — a
+ *    token-level miss; a darker --pds-danger / a --pds-danger-ink fixes it.
+ *  - Card radius = --pds-r-lg (12px) per the merged tokens; the direction doc's
+ *    "8px" is superseded by the token.
+ * ========================================================================== */
+
+/* ========================================================================== *
+ *  BUTTON
+ * ========================================================================== */
+.pds-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--pds-sp-2);
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-3);
+  font-weight: var(--pds-fw-medium);
+  line-height: 1;
+  padding-block: var(--pds-sp-2);
+  padding-inline: var(--pds-sp-4);
+  border: 1px solid transparent;
+  border-radius: var(--pds-r);
+  background: var(--pds-panel-2);
+  color: var(--pds-ink);
+  cursor: pointer;
+  user-select: none;
+  text-decoration: none;                 /* also style <a class="pds-btn">     */
+  transition: background var(--pds-transition), box-shadow var(--pds-transition),
+              filter var(--pds-transition), transform var(--pds-transition);
+}
+.pds-btn:focus-visible {
+  outline: 2px solid var(--pds-primary);
+  outline-offset: 2px;
+}
+.pds-btn:disabled,
+.pds-btn[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+/* neutral hover for the base button. Declared BEFORE the variants so each
+ * variant's own :hover (equal specificity) wins by source order — and every
+ * variant re-declares its background so this neutral tint never leaks in. */
+.pds-btn:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--pds-line-soft);
+}
+
+/* -- variants -- */
+.pds-btn--primary { background: var(--pds-primary); color: white; }
+.pds-btn--primary:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--pds-primary-ink);
+}
+
+.pds-btn--ghost {
+  background: transparent;
+  color: var(--pds-ink);
+  border-color: var(--pds-line);
+}
+.pds-btn--ghost:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--pds-primary-wash);
+  border-color: var(--pds-primary);
+  color: var(--pds-primary-ink);
+}
+
+/* Outline danger (prototype-aligned): red text + border on white, fills on hover.
+ * NOTE: --pds-danger text on white is 3.78:1 (contrast is symmetric, so this is
+ * NOT more AA-compliant than solid white-on-red — the miss lives in the token).
+ * The border is a non-text element and clears the 3:1 bar. A darker --pds-danger
+ * (or a --pds-danger-ink) in a tokens revision is what fully fixes the text. */
+.pds-btn--danger {
+  background: transparent;
+  color: var(--pds-danger);
+  border-color: var(--pds-danger);
+  font-weight: var(--pds-fw-bold);
+}
+.pds-btn--danger:hover:not(:disabled):not([aria-disabled="true"]) {
+  background: var(--pds-danger);         /* fill on hover */
+  color: white;
+}
+
+/* pressed — applies to every variant, never when disabled */
+.pds-btn:active:not(:disabled):not([aria-disabled="true"]) {
+  transform: translateY(1px);
+  filter: brightness(0.95);
+}
+
+/* -- sizes (padding on the 4px scale) -- */
+.pds-btn--sm { font-size: var(--pds-fs-2); padding-block: var(--pds-sp-1); padding-inline: var(--pds-sp-3); }
+.pds-btn--lg { font-size: var(--pds-fs-4); padding-block: var(--pds-sp-3); padding-inline: var(--pds-sp-5); }
+
+/* ========================================================================== *
+ *  CHIP — neutral rounded tag (filters, counts, meta). Not a status pill.
+ * ========================================================================== */
+.pds-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pds-sp-1);
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-2);
+  font-weight: var(--pds-fw-medium);
+  line-height: 1;
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-3);
+  background: var(--pds-panel-2);
+  color: var(--pds-ink-soft);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-pill);
+}
+.pds-chip--primary {
+  background: var(--pds-primary-wash);
+  color: var(--pds-primary-ink);
+  border-color: var(--pds-primary-wash);
+}
+
+/* ========================================================================== *
+ *  STATUS PILL — the signature Monday element (prototype-aligned, Amnon 2026-07-18).
+ *  DEFAULT = SOLID saturated hue + DARK ink text (dark text keeps every stage
+ *  legible where white does not — new/invited/hired clear AA 4.5:1; purple
+ *  `contacted` + red `rejected` land ~4.1:1, still far better than white; only a
+ *  darker stage token would push those two over 4.5). Each stage modifier sets
+ *  two local vars (--_c hue, --_w wash) so the hue lives in exactly one place.
+ * ========================================================================== */
+.pds-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pds-sp-2);
+  font-family: var(--pds-font);
+  font-size: var(--pds-fs-2);
+  font-weight: var(--pds-fw-bold);
+  line-height: 1;
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-3);
+  border-radius: var(--pds-r-sm);
+  background: var(--_c, var(--pds-ink-faint));  /* saturated hue (solid default) */
+  color: var(--pds-ink);
+}
+.pds-pill__dot {
+  inline-size: var(--pds-sp-2);
+  block-size: var(--pds-sp-2);
+  border-radius: var(--pds-r-pill);
+  background: var(--pds-ink);          /* dark dot: visible on the hue, matches the text */
+  flex: 0 0 auto;
+}
+/* soft = pale tint + hue dot, for dense or secondary contexts */
+.pds-pill--soft {
+  background: var(--_w, var(--pds-panel-2));
+  color: var(--pds-ink);
+}
+.pds-pill--soft .pds-pill__dot { background: var(--_c, var(--pds-ink-faint)); }
+
+/* stage hues — map 1:1 to the token names. RE confidence bands REUSE these
+ * (high→hired, medium→invited, low→rejected, verified→new, conflict→contacted). */
+.pds-pill--new       { --_c: var(--pds-stage-new);       --_w: var(--pds-stage-new-wash); }
+.pds-pill--contacted { --_c: var(--pds-stage-contacted); --_w: var(--pds-stage-contacted-wash); }
+.pds-pill--invited   { --_c: var(--pds-stage-invited);   --_w: var(--pds-stage-invited-wash); }
+.pds-pill--rejected  { --_c: var(--pds-stage-rejected);  --_w: var(--pds-stage-rejected-wash); }
+.pds-pill--hired     { --_c: var(--pds-stage-hired);     --_w: var(--pds-stage-hired-wash); }
+
+/* ========================================================================== *
+ *  CARD / PANEL — flat white surface, one radius, one shadow.
+ * ========================================================================== */
+.pds-card {
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-lg);
+  box-shadow: var(--pds-shadow);
+  padding: var(--pds-sp-4);
+}
+.pds-card--flush { padding: 0; }         /* for cards wrapping a table/media    */
+
+/* optional subtle hover-lift — also lifts when a child control is focused */
+.pds-card--hover {
+  transition: box-shadow var(--pds-transition), transform var(--pds-transition);
+}
+.pds-card--hover:hover,
+.pds-card--hover:focus-within {
+  box-shadow: var(--pds-shadow-lg);
+  transform: translateY(-1px);
+}

@@ -1,0 +1,99 @@
+{#- ===========================================================================
+    Pealton Design System — Jinja macros (PLT-060, phase 6)
+
+    Shared markup so components are never copy-pasted across the apps' pages.
+    The macros emit the SAME classes the DS CSS styles (components.css, forms.css,
+    tabulator.css, overlays.css); load that CSS + pds.js from the package static
+    dir (see README).
+
+    Import once per template:   {% import "pds.html" as pds %}
+    Then:                       {{ pds.button("שמור", variant="primary") }}
+
+    Text arguments are HTML-escaped by Jinja autoescape — keep autoescape on.
+=========================================================================== -#}
+
+{#- Button: variant = primary|ghost|danger (blank = neutral); size = sm|lg -#}
+{% macro button(label, variant="", size="", type="button", disabled=false, id="", attrs="") -%}
+<button class="pds-btn{% if variant %} pds-btn--{{ variant }}{% endif %}{% if size %} pds-btn--{{ size }}{% endif %}" type="{{ type }}"{% if id %} id="{{ id }}"{% endif %}{% if disabled %} disabled{% endif %}{% if attrs %} {{ attrs|safe }}{% endif %}>{{ label }}</button>
+{%- endmacro %}
+
+{#- Neutral chip / tag. variant = primary (optional) -#}
+{% macro chip(label, variant="") -%}
+<span class="pds-chip{% if variant %} pds-chip--{{ variant }}{% endif %}">{{ label }}</span>
+{%- endmacro %}
+
+{#- Status pill. stage = new|contacted|invited|rejected|hired.
+    Default = solid saturated hue + dark text; soft=true = pale tinted variant. -#}
+{% macro pill(label, stage, soft=false, dot=true) -%}
+<span class="pds-pill{% if soft %} pds-pill--soft{% endif %} pds-pill--{{ stage }}">{% if dot %}<span class="pds-pill__dot"></span>{% endif %}{{ label }}</span>
+{%- endmacro %}
+
+{#- Card. Body via {% call %}. hover = lift on hover/focus; flush = no padding -#}
+{% macro card(hover=false, flush=false, attrs="") -%}
+<div class="pds-card{% if hover %} pds-card--hover{% endif %}{% if flush %} pds-card--flush{% endif %}"{% if attrs %} {{ attrs|safe }}{% endif %}>{{ caller() }}</div>
+{%- endmacro %}
+
+{#- Text input. Set invalid to add the danger border + aria-invalid -#}
+{% macro input(name, type="text", value="", placeholder="", invalid=false, disabled=false, id="") -%}
+<input class="pds-input{% if invalid %} pds-input--invalid{% endif %}" type="{{ type }}" name="{{ name }}" id="{{ id or name }}"{% if value %} value="{{ value }}"{% endif %}{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if disabled %} disabled{% endif %}>
+{%- endmacro %}
+
+{% macro textarea(name, value="", placeholder="", invalid=false, disabled=false, id="") -%}
+<textarea class="pds-textarea" name="{{ name }}" id="{{ id or name }}"{% if placeholder %} placeholder="{{ placeholder }}"{% endif %}{% if invalid %} aria-invalid="true"{% endif %}{% if disabled %} disabled{% endif %}>{{ value }}</textarea>
+{%- endmacro %}
+
+{#- Native select. options = list of strings; selected = the chosen value -#}
+{% macro select(name, options, selected="", disabled=false, id="") -%}
+<select class="pds-select" name="{{ name }}" id="{{ id or name }}"{% if disabled %} disabled{% endif %}>
+{% for opt in options %}<option{% if opt == selected %} selected{% endif %}>{{ opt }}</option>
+{% endfor %}</select>
+{%- endmacro %}
+
+{% macro checkbox(label, name, checked=false, disabled=false, id="") -%}
+<label class="pds-check"><input class="pds-checkbox" type="checkbox" name="{{ name }}" id="{{ id or name }}"{% if checked %} checked{% endif %}{% if disabled %} disabled{% endif %}> {{ label }}</label>
+{%- endmacro %}
+
+{#- Labelled field = label + input + optional help / error. Passing `error`
+    puts the input in the invalid state and shows the message. -#}
+{% macro field(label, name, type="text", value="", placeholder="", help="", error="", required=false, invalid=false) -%}
+<div class="pds-field">
+  <label class="pds-label" for="{{ name }}">{{ label }}{% if required %} <span class="pds-req">*</span>{% endif %}</label>
+  {{ input(name, type=type, value=value, placeholder=placeholder, invalid=(invalid or (error|length > 0))) }}
+  {% if help %}<div class="pds-help">{{ help }}</div>{% endif %}
+  {% if error %}<div class="pds-error">{{ error }}</div>{% endif %}
+</div>
+{%- endmacro %}
+
+{#- Table container. The app initialises Tabulator on this id (add class pds-tabulator). -#}
+{% macro table(id, attrs="") -%}
+<div class="pds-tabulator" id="{{ id }}"{% if attrs %} {{ attrs|safe }}{% endif %}></div>
+{%- endmacro %}
+
+{#- Modal. Renders the <dialog> shell + header (title, close, aria wired).
+    Body + footer come from the caller:
+    {% call pds.modal("confirm", "כותרת") %}
+      <div class="pds-dialog__body">…</div>
+      <div class="pds-dialog__footer">…</div>
+    {% endcall %}                                                              -#}
+{% macro modal(id, title, labelledby="", close_label="Close") -%}
+{% set lb = labelledby or (id ~ "-title") %}
+<dialog class="pds-modal" id="{{ id }}" aria-labelledby="{{ lb }}">
+  <div class="pds-dialog__header">
+    <h3 class="pds-dialog__title" id="{{ lb }}">{{ title }}</h3>
+    <button class="pds-dialog__close" type="button" data-pds-close aria-label="{{ close_label }}">&times;</button>
+  </div>
+  {{ caller() }}
+</dialog>
+{%- endmacro %}
+
+{#- Drawer (slide-over). Same shape as modal. -#}
+{% macro drawer(id, title, labelledby="", close_label="Close") -%}
+{% set lb = labelledby or (id ~ "-title") %}
+<dialog class="pds-drawer" id="{{ id }}" aria-labelledby="{{ lb }}">
+  <div class="pds-dialog__header">
+    <h3 class="pds-dialog__title" id="{{ lb }}">{{ title }}</h3>
+    <button class="pds-dialog__close" type="button" data-pds-close aria-label="{{ close_label }}">&times;</button>
+  </div>
+  {{ caller() }}
+</dialog>
+{%- endmacro %}

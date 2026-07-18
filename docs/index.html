@@ -3,8 +3,15 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Pealton Design System — tokens (phase 1)</title>
+  <title>Pealton Design System — tokens + Rubik + components + forms/table + overlays (phase 5)</title>
+  <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
   <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/components.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/forms.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/overlays.css">
+  <!-- Tabulator base FIRST, then the DS theme so token overrides win (docs-only vendored copy, v6.3.1) -->
+  <link rel="stylesheet" href="vendor/tabulator/tabulator.min.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/tabulator.css">
   <style>
     body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
            margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
@@ -31,13 +38,34 @@
                   border: 2px solid var(--pds-primary); }
     .note { color: var(--pds-ink-faint); font-size: var(--pds-fs-2); margin-top: var(--pds-sp-6);
             border-top: 1px solid var(--pds-line); padding-top: var(--pds-sp-4); max-width: 70ch; }
+    .font-check { display: inline-block; font-size: var(--pds-fs-2); font-weight: var(--pds-fw-medium);
+                  padding: var(--pds-sp-2) var(--pds-sp-3); border-radius: var(--pds-r);
+                  margin: 0 0 var(--pds-sp-5); background: var(--pds-panel-2); color: var(--pds-ink-soft);
+                  border: 1px solid var(--pds-line); }
+    .font-check.ok   { background: var(--pds-stage-hired-wash); color: #0a7a4d; border-color: #b6e6d1; }
+    .font-check.fail { background: var(--pds-danger-wash);      color: #a11238; border-color: #f3b6c5; }
+    .type-samples { display: flex; flex-wrap: wrap; gap: var(--pds-sp-5); align-items: baseline; }
+    .type-samples .heb { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
+    .type-samples .lat { font-size: var(--pds-fs-6); font-weight: var(--pds-fw-heavy); }
+    .type-samples .weights span { margin-inline-end: var(--pds-sp-3); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--pds-sp-3); align-items: center;
+                margin: var(--pds-sp-3) 0; }
+    .demo-label { width: 100%; font-size: var(--pds-fs-1); color: var(--pds-ink-faint);
+                  font-weight: var(--pds-fw-medium); margin-top: var(--pds-sp-3); }
+    .demo-cards { display: flex; flex-wrap: wrap; gap: var(--pds-sp-4); align-items: stretch; }
+    .demo-cards .pds-card { width: 220px; }
+    .demo-form { max-width: 420px; }
+    .demo-form-2col { display: grid; grid-template-columns: 1fr 1fr; gap: var(--pds-sp-4); max-width: 620px; }
+    #demo-table { max-width: 760px; margin-top: var(--pds-sp-3); }
   </style>
 </head>
 <body>
   <h1>Pealton Design System</h1>
-  <p class="lede">Phase 1 — the canonical token layer. Monday-inspired, light scale.
-    Every token below is a CSS custom property that both Pealton apps consume from a
-    single source. Components arrive in later phases.</p>
+  <p class="lede">Phases 1–2 — the canonical token layer + self-hosted <strong>Rubik</strong>.
+    Monday-inspired, light scale. Every token below is a CSS custom property that both
+    Pealton apps consume from a single source. Components arrive in later phases.</p>
+
+  <div id="font-check" class="font-check" role="status">בודק את גופן רוביק… — checking Rubik…</div>
 
   <h2>Brand &amp; ink</h2>
   <div class="grid">
@@ -104,8 +132,241 @@
     <div class="type-row" style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">Aa 12 — caption</div>
   </div>
 
-  <p class="note"><strong>Phase 1 scope.</strong> Tokens only. Rubik is self-hosted in
-    phase 2 (PLT-056) — until then this page shows the Hebrew fallback stack.
+  <h2>Buttons (phase 3)</h2>
+  <div class="demo-label">variants · sizes · states</div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary">ראשי</button>
+    <button class="pds-btn pds-btn--ghost">משני</button>
+    <button class="pds-btn pds-btn--danger">מחיקה</button>
+    <button class="pds-btn">רגיל</button>
+  </div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary pds-btn--sm">Small</button>
+    <button class="pds-btn pds-btn--primary">Default</button>
+    <button class="pds-btn pds-btn--primary pds-btn--lg">Large</button>
+  </div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary" disabled>Disabled</button>
+    <button class="pds-btn pds-btn--ghost" disabled>Disabled</button>
+    <a href="#buttons" class="pds-btn pds-btn--ghost">קישור כפתור</a>
+    <span style="font-size:var(--pds-fs-1);color:var(--pds-ink-faint)">↹ Tab to a button to see the focus ring</span>
+  </div>
+
+  <h2>Chips</h2>
+  <div class="demo-row">
+    <span class="pds-chip">42 מועמדים</span>
+    <span class="pds-chip pds-chip--primary">מסונן</span>
+    <span class="pds-chip">Tel&nbsp;Aviv</span>
+  </div>
+
+  <h2>Status pills — the signature element</h2>
+  <div class="demo-label">default: solid saturated hue + dark ink text (prototype look) — HR candidate stages</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--new"><span class="pds-pill__dot"></span>חדש</span>
+    <span class="pds-pill pds-pill--contacted"><span class="pds-pill__dot"></span>פניתי</span>
+    <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>זומן לראיון</span>
+    <span class="pds-pill pds-pill--rejected"><span class="pds-pill__dot"></span>לא רלוונטי</span>
+    <span class="pds-pill pds-pill--hired"><span class="pds-pill__dot"></span>התקבל</span>
+  </div>
+  <div class="demo-label">--soft: pale tint variant, for dense or secondary contexts</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--soft pds-pill--new"><span class="pds-pill__dot"></span>חדש</span>
+    <span class="pds-pill pds-pill--soft pds-pill--contacted"><span class="pds-pill__dot"></span>פניתי</span>
+    <span class="pds-pill pds-pill--soft pds-pill--invited"><span class="pds-pill__dot"></span>זומן</span>
+    <span class="pds-pill pds-pill--soft pds-pill--rejected"><span class="pds-pill__dot"></span>לא רלוונטי</span>
+    <span class="pds-pill pds-pill--soft pds-pill--hired"><span class="pds-pill__dot"></span>התקבל</span>
+  </div>
+  <div class="demo-label">real-estate confidence bands — REUSE the same five hues (no new colours)</div>
+  <div class="demo-row">
+    <span class="pds-pill pds-pill--hired"><span class="pds-pill__dot"></span>ודאות גבוהה</span>
+    <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>ודאות בינונית</span>
+    <span class="pds-pill pds-pill--rejected"><span class="pds-pill__dot"></span>ודאות נמוכה</span>
+    <span class="pds-pill pds-pill--new"><span class="pds-pill__dot"></span>מאומת</span>
+    <span class="pds-pill pds-pill--contacted"><span class="pds-pill__dot"></span>סתירה</span>
+  </div>
+
+  <h2>Cards</h2>
+  <div class="demo-cards">
+    <div class="pds-card">
+      <div style="font-size:var(--pds-fs-5);font-weight:var(--pds-fw-bold)">כרטיס רגיל</div>
+      <p style="color:var(--pds-ink-soft);margin:var(--pds-sp-2) 0 0">משטח לבן שטוח, פינה אחת, צל אחד.</p>
+    </div>
+    <div class="pds-card pds-card--hover" tabindex="0">
+      <div style="font-size:var(--pds-fs-5);font-weight:var(--pds-fw-bold)">כרטיס עם ריחוף</div>
+      <p style="color:var(--pds-ink-soft);margin:var(--pds-sp-2) 0 0">מרחף מעט בריחוף או במיקוד.</p>
+    </div>
+  </div>
+
+  <h2>Form controls (phase 4)</h2>
+  <div class="demo-label">one focus treatment · normal / disabled / invalid</div>
+  <div class="demo-form" dir="rtl">
+    <div class="pds-field">
+      <label class="pds-label" for="f-name">שם מלא <span class="pds-req">*</span></label>
+      <input class="pds-input" id="f-name" type="text" placeholder="לדוגמה: דנה כהן">
+      <div class="pds-help">כפי שמופיע בתעודת הזהות</div>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-role">משרה</label>
+      <select class="pds-select" id="f-role">
+        <option>מפתח/ת</option><option>מעצב/ת</option><option>מוצר</option>
+      </select>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-notes">הערות</label>
+      <textarea class="pds-textarea" id="f-notes" placeholder="הערות חופשיות…"></textarea>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-mail">דוא״ל (מצב שגיאה)</label>
+      <input class="pds-input pds-input--invalid" id="f-mail" type="email" value="not-an-email">
+      <div class="pds-error">כתובת דוא״ל לא תקינה</div>
+    </div>
+    <div class="pds-field">
+      <label class="pds-label" for="f-dis">שדה מושבת</label>
+      <input class="pds-input" id="f-dis" type="text" value="לא ניתן לעריכה" disabled>
+    </div>
+    <div class="pds-field">
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox" checked> מועמד/ת פעיל/ה</label><br>
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox" disabled> מסומן ומושבת</label>
+    </div>
+  </div>
+
+  <h2>Table — Tabulator, DS-themed (phase 4)</h2>
+  <div class="demo-label">RTL · selectable rows (hover + selected) · a status column reusing .pds-pill</div>
+  <div id="demo-table" class="pds-tabulator"></div>
+
+  <h2>Overlays — modal &amp; drawer (phase 5)</h2>
+  <div class="demo-label">native &lt;dialog&gt; · focus trapped · Escape closes · focus returns to the opener · backdrop click closes</div>
+  <div class="demo-row">
+    <button class="pds-btn pds-btn--primary" data-pds-open="demo-modal">פתח מודל</button>
+    <button class="pds-btn pds-btn--ghost" data-pds-open="demo-drawer">פתח מגירה</button>
+  </div>
+
+  <dialog class="pds-modal" id="demo-modal" dir="rtl" aria-labelledby="demo-modal-title">
+    <div class="pds-dialog__header">
+      <h3 class="pds-dialog__title" id="demo-modal-title">אישור פעולה</h3>
+      <button class="pds-dialog__close" data-pds-close aria-label="סגור">&times;</button>
+    </div>
+    <div class="pds-dialog__body">
+      <p style="margin-top:0;color:var(--pds-ink-soft)">להעביר את המועמד לשלב "זומן לראיון"? אפשר להוסיף הערה:</p>
+      <div class="pds-field">
+        <label class="pds-label" for="m-note">הערה</label>
+        <input class="pds-input" id="m-note" type="text" placeholder="לא חובה">
+      </div>
+      <label class="pds-check"><input class="pds-checkbox" type="checkbox"> שלח עדכון במייל</label>
+    </div>
+    <div class="pds-dialog__footer">
+      <button class="pds-btn pds-btn--ghost" data-pds-close>ביטול</button>
+      <button class="pds-btn pds-btn--primary" data-pds-close>אישור</button>
+    </div>
+  </dialog>
+
+  <dialog class="pds-drawer" id="demo-drawer" dir="rtl" aria-labelledby="demo-drawer-title">
+    <div class="pds-dialog__header">
+      <h3 class="pds-dialog__title" id="demo-drawer-title">דנה כהן</h3>
+      <button class="pds-dialog__close" data-pds-close aria-label="סגור">&times;</button>
+    </div>
+    <div class="pds-dialog__body">
+      <div class="demo-row" style="margin-top:0">
+        <span class="pds-pill pds-pill--invited"><span class="pds-pill__dot"></span>זומן לראיון</span>
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-phone">טלפון</label>
+        <input class="pds-input" id="d-phone" type="tel" value="050-1234567">
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-stage">שלב</label>
+        <select class="pds-select" id="d-stage">
+          <option>חדש</option><option selected>זומן לראיון</option><option>התקבל</option>
+        </select>
+      </div>
+      <div class="pds-field">
+        <label class="pds-label" for="d-notes">הערות</label>
+        <textarea class="pds-textarea" id="d-notes" placeholder="הערות על המועמד…"></textarea>
+      </div>
+    </div>
+    <div class="pds-dialog__footer">
+      <button class="pds-btn pds-btn--ghost" data-pds-close>סגור</button>
+      <button class="pds-btn pds-btn--primary" data-pds-close>שמור</button>
+    </div>
+  </dialog>
+
+  <h2>Rubik — self-hosted (phase 2)</h2>
+  <div class="card type-samples">
+    <div>
+      <div class="heb" lang="he" dir="rtl">פְּעַלְתּוֹן — מערכת הגיוס</div>
+      <div class="lat">Pealton — Rubik 0123456789</div>
+    </div>
+    <div class="weights" style="font-size:var(--pds-fs-5)">
+      <span style="font-weight:400">רגיל 400</span>
+      <span style="font-weight:600">בינוני 600</span>
+      <span style="font-weight:700">מודגש 700</span>
+      <span style="font-weight:800">כבד 800</span>
+    </div>
+  </div>
+
+  <p class="note"><strong>Phase 2 (PLT-056).</strong> Rubik (SIL OFL, variable weight
+    300–900, Hebrew + Latin subsets, ~44&nbsp;KB) now ships inside the package as
+    <code>static/fonts/*.woff2</code> and loads via <code>static/fonts.css</code> — no
+    CDN, offline-safe. This removes the silent Segoe-UI / system fallback both apps used
+    to render. The banner above verifies Rubik actually rendered Hebrew.
     Components, macros, and the app rollout follow in PLT-057 … PLT-069.</p>
+
+  <!-- DS behaviour module (overlay open/close; native <dialog> does the focus trap) -->
+  <script src="../pealton_design_system/static/pds.js"></script>
+
+  <!-- Tabulator base JS (docs-only vendored copy, v6.3.1) + DS-themed demo table -->
+  <script src="vendor/tabulator/tabulator.min.js"></script>
+  <script>
+    (function () {
+      var STAGE = {
+        new:       { cls: 'new',       label: 'חדש' },
+        contacted: { cls: 'contacted', label: 'פניתי' },
+        invited:   { cls: 'invited',   label: 'זומן לראיון' },
+        rejected:  { cls: 'rejected',  label: 'לא רלוונטי' },
+        hired:     { cls: 'hired',     label: 'התקבל' }
+      };
+      function pill(cell) {
+        var s = STAGE[cell.getValue()] || STAGE.new;
+        return '<span class="pds-pill pds-pill--' + s.cls + '">' +
+               '<span class="pds-pill__dot"></span>' + s.label + '</span>';
+      }
+      window.__pdsTable = new Tabulator('#demo-table', {
+        textDirection: 'rtl',
+        layout: 'fitColumns',
+        selectableRows: true,
+        pagination: 'local',
+        paginationSize: 3,
+        paginationCounter: 'rows',
+        data: [
+          { name: 'דנה כהן',    role: 'מפתחת',  status: 'new' },
+          { name: 'יוסי לוי',    role: 'מעצב',   status: 'contacted' },
+          { name: 'מאיה בר',     role: 'מוצר',   status: 'invited' },
+          { name: 'אבי שלום',    role: 'מפתח',   status: 'rejected' },
+          { name: 'נועה אזולאי', role: 'מעצבת',  status: 'hired' }
+        ],
+        columns: [
+          { title: 'שם', field: 'name', widthGrow: 2 },
+          { title: 'משרה', field: 'role', widthGrow: 1 },
+          { title: 'סטטוס', field: 'status', widthGrow: 2, formatter: pill, hozAlign: 'right' }
+        ]
+      });
+    })();
+  </script>
+
+  <script>
+    // Postcondition (PLT-056): Rubik must actually render Hebrew after fonts load.
+    (function () {
+      var el = document.getElementById('font-check');
+      document.fonts.ready.then(function () {
+        var ok = document.fonts.check('800 16px Rubik', 'פעלתון');
+        el.textContent = ok
+          ? '✓ Rubik is rendering Hebrew (document.fonts.check(\'800 16px Rubik\',\'פעלתון\') = true)'
+          : '✗ Rubik did NOT load — still on the fallback stack';
+        el.classList.add(ok ? 'ok' : 'fail');
+        // expose for automated verification
+        window.__pdsRubikOk = ok;
+      });
+    })();
+  </script>
 </body>
 </html>
