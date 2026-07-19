@@ -34,6 +34,14 @@
   <p class="lede">The DS themed Tabulator wrapper. RTL, virtual scroll, no
     pagination. Use the buttons to drive the four contract states; select rows to
     see the "N נבחרו" bulk bar with a clear control and one demo action.</p>
+  <p class="lede"><strong>Inline edit (PLT-081):</strong> click a value in the
+    <em>אחראי</em> (owner) column to edit it in place — ✓ confirm / ✕ cancel,
+    Enter/Esc, with a busy state while saving. This demo is wired to a
+    <strong>fake async saver</strong> so you can see every path: type a value
+    containing <code>fail</code> → the save is rejected (retry in place); type a
+    value containing <code>conflict</code> → a 409-shaped rejection refreshes the
+    cell to the server value with an inline notice (no silent overwrite); any
+    other value saves after a short delay.</p>
 
   <div class="demo-label">state controls</div>
   <div class="demo-row">
@@ -51,6 +59,8 @@
 
   <!-- Tabulator base JS (docs-only vendored copy, v6.3.1) -->
   <script src="vendor/tabulator/tabulator.min.js"></script>
+  <!-- DS inline field-editor (must load BEFORE pds-table.js so editable cells work) -->
+  <script src="../pealton_design_system/static/pds-field-editor.js"></script>
   <!-- DS table wrapper -->
   <script src="../pealton_design_system/static/pds-table.js"></script>
   <script>
@@ -73,10 +83,40 @@
         emptyText: "אין פריטים להצגה בתצוגה זו",
         errorText: "טעינת הנתונים נכשלה",
         retryText: "נסה שוב",
+        // The owner column is inline-editable via the SHARED field-editor grammar.
         columns: [
           { title: "פריט", field: "title", widthGrow: 2 },
-          { title: "אחראי", field: "owner", widthGrow: 1 }
+          {
+            title: "אחראי",
+            field: "owner",
+            widthGrow: 1,
+            editable: {
+              type: "text",
+              // per-field validation hook: owner must not be blank.
+              validate: function (value) {
+                return String(value).trim() ? true : "שדה חובה";
+              },
+              conflictText: "הערך עודכן במקום אחר — הוצג הערך העדכני, החל מחדש."
+            }
+          }
         ],
+        // wait-not-optimistic commit: the row updates ONLY after this promise
+        // resolves. A FAKE async saver demos all three paths (success/fail/409).
+        onFieldSave: function (ctx) {
+          return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+              var v = String(ctx.value);
+              if (v.indexOf("fail") !== -1) {
+                reject(new Error("שמירה נכשלה (הדגמה)"));
+              } else if (v.indexOf("conflict") !== -1) {
+                // 409-shaped rejection: someone else wrote a newer value first.
+                reject({ conflict: true, current: ctx.previous + " (עודכן בשרת)" });
+              } else {
+                resolve();
+              }
+            }, 600);
+          });
+        },
         onSelectionChange: function (sel) {
           // The DS renders the "N נבחרו" count + we render OUR OWN action here:
           // a clear control and one demo consumer action button.

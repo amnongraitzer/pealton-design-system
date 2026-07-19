@@ -258,3 +258,137 @@
   color: var(--pds-ink);
   margin-inline-end: var(--pds-sp-2);
 }
+
+/* -- inline field editor (PLT-081) ----------------------------------------
+ * The ONE inline-edit grammar (docs/TABLE-CONTRACT.md §Inline edit): a display
+ * value that opens an in-place editor with explicit ✓/✕, a wait-not-optimistic
+ * busy state, a validation message, and a 409-conflict notice. Tokens + logical
+ * properties only (RTL-safe); usable in a table cell AND standalone (the drawer).
+ * ------------------------------------------------------------------------- */
+.pds-field-editor {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--pds-sp-2);
+  inline-size: 100%;
+}
+
+/* display: the value, clickable to edit. A subtle affordance appears on hover/focus. */
+.pds-field-editor__display {
+  appearance: none;
+  font: inherit;
+  color: inherit;
+  text-align: start;
+  inline-size: 100%;
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-2);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: var(--pds-r-sm);
+  cursor: text;
+  transition: var(--pds-transition);
+}
+.pds-field-editor__display:hover,
+.pds-field-editor__display:focus-visible {
+  border-color: var(--pds-line);
+  background: var(--pds-panel-2);
+}
+
+/* the editing control (text / number / select) */
+.pds-field-editor__control {
+  font: inherit;
+  color: var(--pds-ink);
+  inline-size: 100%;
+  min-inline-size: 6ch;
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-2);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-primary);
+  border-radius: var(--pds-r-sm);
+  box-shadow: var(--pds-ring);
+}
+.pds-field-editor__control:disabled {
+  color: var(--pds-ink-faint);
+  background: var(--pds-panel-2);
+}
+
+/* ✓ / ✕ action buttons */
+.pds-field-editor__actions {
+  display: inline-flex;
+  gap: var(--pds-sp-1);
+  flex: none;
+}
+.pds-field-editor__confirm,
+.pds-field-editor__cancel {
+  appearance: none;
+  cursor: pointer;
+  inline-size: var(--pds-sp-5);
+  block-size: var(--pds-sp-5);
+  line-height: 1;
+  border-radius: var(--pds-r-sm);
+  border: 1px solid var(--pds-line);
+  background: var(--pds-panel);
+  color: var(--pds-ink-soft);
+  transition: var(--pds-transition);
+}
+.pds-field-editor__confirm {
+  border-color: var(--pds-success);
+  color: var(--pds-success);
+}
+.pds-field-editor__cancel {
+  border-color: var(--pds-line);
+  color: var(--pds-ink-soft);
+}
+.pds-field-editor__confirm:disabled,
+.pds-field-editor__cancel:disabled {
+  cursor: default;
+  color: var(--pds-ink-faint);
+  border-color: var(--pds-line-soft);
+}
+
+/* in-control busy spinner: the ✓ button spins while the save is in flight */
+.pds-field-editor__confirm.is-busy {
+  color: transparent;
+  position: relative;
+}
+.pds-field-editor__confirm.is-busy::after {
+  content: "";
+  position: absolute;
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  inline-size: var(--pds-sp-3);
+  block-size: var(--pds-sp-3);
+  margin-block-start: calc(var(--pds-sp-3) / -2);
+  margin-inline-start: calc(var(--pds-sp-3) / -2);
+  border: 2px solid var(--pds-line);
+  border-block-start-color: var(--pds-primary);
+  border-radius: var(--pds-r-pill);
+  animation: pds-table-spin 0.7s linear infinite;
+}
+
+/* validation / error message under the control */
+.pds-field-editor__msg {
+  font-size: var(--pds-fs-1);
+  color: var(--pds-danger);
+}
+.pds-field-editor__msg[hidden] {
+  display: none;
+}
+
+/* 409-conflict notice shown in display mode after the row refreshes */
+.pds-field-editor__notice {
+  font-size: var(--pds-fs-1);
+  padding-block: var(--pds-sp-1);
+  padding-inline: var(--pds-sp-2);
+  border-radius: var(--pds-r-sm);
+}
+.pds-field-editor__notice--conflict {
+  color: var(--pds-warn);
+  background: var(--pds-danger-wash);
+}
+
+/* honour reduced-motion for the in-control spinner */
+@media (prefers-reduced-motion: reduce) {
+  .pds-field-editor__confirm.is-busy::after {
+    animation: none;
+  }
+}

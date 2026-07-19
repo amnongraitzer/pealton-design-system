@@ -105,9 +105,95 @@
     delete config.paginationSize;
     delete config.paginationCounter;
 
+    /* -- editable columns (reuse the ONE inline-edit grammar) ----------------
+     * A column may carry `editable: { type, choices, validate }`. Rather than
+     * re-implement editing, we open the STANDALONE `createFieldEditor` (PLT-081)
+     * in the clicked cell so a table cell and the Epic 4 drawer share the exact
+     * same ✓/✕ + Enter/Esc + busy + 409-conflict grammar (contract §Inline edit:
+     * "inline and drawer share ONE grammar"). Commit is wait-not-optimistic: the
+     * row only updates AFTER the caller's onFieldSave promise resolves. */
+    function resolveFieldEditor() {
+      var w = typeof window !== "undefined" ? window : null;
+      var factory =
+        (w && w.createFieldEditor) || (w && w.PDS && w.PDS.createFieldEditor);
+      if (typeof factory !== "function") {
+        throw new Error(
+          "pds-table: editable columns need createFieldEditor — the consuming " +
+            "app must include pds-field-editor.js before pds-table.js"
+        );
+      }
+      return factory;
+    }
+
+    // Bootstrap an inline editor inside a clicked editable cell. Once mounted,
+    // the field editor OWNS the cell DOM and manages its own open/close/notice —
+    // so we do NOT call row.update() (which would re-render the cell, re-enter
+    // this handler from a bubbled click, and wipe the conflict notice). Instead
+    // we keep Tabulator's row data in sync by reference on the terminal events.
+    function openCellEditor(cell, editable) {
+      var cellEl = cell.getElement();
+      // Guard re-entry: if an editor already owns this cell, let it manage
+      // itself — a click on the editor's own control/buttons bubbles up here.
+      if (cellEl.querySelector && cellEl.querySelector(".pds-field-editor")) {
+        return;
+      }
+      var createFieldEditor = resolveFieldEditor();
+      if (typeof options.onFieldSave !== "function") {
+        throw new Error(
+          "pds-table: an editable column needs an options.onFieldSave(ctx) " +
+            "promise to commit edits"
+        );
+      }
+      var field = cell.getField();
+      var rowData = cell.getData(); // live row-data object (Tabulator v6)
+      var id = rowData[idField];
+
+      // Wipe the formatter output so the editor is the only thing in the cell.
+      cellEl.textContent = "";
+
+      createFieldEditor(cellEl, {
+        value: rowData[field],
+        type: editable.type,
+        choices: editable.choices,
+        validate: editable.validate,
+        conflictText: editable.conflictText,
+        errorText: editable.errorText,
+        // wait-not-optimistic: hand the commit to the caller, await its promise.
+        // `previous` is read live so it reflects a prior conflict-refresh.
+        onSave: function (value) {
+          return options.onFieldSave({
+            id: id,
+            field: field,
+            value: value,
+            previous: rowData[field],
+          });
+        },
+        // success → adopt the value in the row data (editor shows it in-cell).
+        onCommit: function (value) {
+          rowData[field] = value;
+        },
+        // 409 → adopt the SERVER value (no silent overwrite); the editor keeps
+        // showing the fresh value + its inline notice in the cell.
+        onConflict: function (current) {
+          rowData[field] = current;
+        },
+      }).open();
+    }
+
     /* Selection column: a narrow, unsortable, centred checkbox column using
      * Tabulator's built-in rowSelection formatter for header + cell. */
-    var columns = (options.columns || []).slice();
+    var columns = (options.columns || []).slice().map(function (col) {
+      // Attach a cellClick that opens the shared inline editor for this column.
+      if (col && col.editable) {
+        var editable = col.editable;
+        var next = Object.assign({}, col);
+        next.cellClick = function (e, cell) {
+          openCellEditor(cell, editable);
+        };
+        return next;
+      }
+      return col;
+    });
     if (selectionEnabled) {
       config.selectableRows = true;
       columns.unshift({
