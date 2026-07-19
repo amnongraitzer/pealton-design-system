@@ -128,3 +128,133 @@
   color: white;
   border-color: var(--pds-primary);
 }
+
+/* ============================================================================
+ * State overlay + skeleton + spinner + bulk bar (PLT-080, Epic 3)
+ *
+ * The pds-table.js wrapper injects ONE `.pds-table-overlay` over the table for
+ * the four contract states (loading skeleton / per-view empty / error+retry /
+ * loading-more) and a `.pds-bulk-bar` selection mount. Tokens only (no raw hex);
+ * CSS logical properties throughout so it is RTL-safe like the theme above.
+ * ========================================================================== */
+
+/* The wrapper needs a positioning context for the absolute overlay. JS also
+ * sets this inline as a load-order belt-and-suspenders. */
+.pds-tabulator.tabulator {
+  position: relative;
+}
+
+/* -- overlay layer --------------------------------------------------------- */
+.pds-table-overlay {
+  position: absolute;
+  inset-block: 0;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--pds-sp-5);
+  background: var(--pds-panel);
+  border-radius: var(--pds-r-lg);
+  z-index: var(--pds-z-base);
+}
+.pds-table-overlay[hidden] {
+  display: none;
+}
+/* loading-more layers NEAR the loaded edge without hiding rows: transparent to
+ * clicks and anchored to the block-end (bottom in LTR/RTL alike). */
+.pds-table-overlay--passthrough {
+  background: transparent;
+  align-items: flex-end;
+  pointer-events: none;
+}
+
+/* -- state block (empty / error / loading-more copy) ----------------------- */
+.pds-table-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--pds-sp-3);
+  text-align: center;
+  color: var(--pds-ink-soft);
+}
+.pds-table-state__msg {
+  margin: 0;
+  font-size: var(--pds-fs-3);
+  color: var(--pds-ink-soft);
+}
+.pds-table-state--error .pds-table-state__msg {
+  color: var(--pds-danger);
+}
+/* retry reuses the DS button look (element also carries .pds-btn); this only
+ * gives it breathing room under the message. */
+.pds-table-retry {
+  margin-block-start: var(--pds-sp-1);
+}
+
+/* -- skeleton (first-load placeholder rows) -------------------------------- */
+.pds-table-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: var(--pds-sp-3);
+  inline-size: 100%;
+}
+.pds-table-skeleton__row {
+  block-size: var(--pds-sp-5);
+  border-radius: var(--pds-r-sm);
+  background: var(--pds-line-soft);
+  background-image: linear-gradient(
+    90deg,
+    var(--pds-line-soft) 0%,
+    var(--pds-panel-2) 50%,
+    var(--pds-line-soft) 100%
+  );
+  background-size: 200% 100%;
+  animation: pds-table-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes pds-table-shimmer {
+  from { background-position-x: 200%; }
+  to   { background-position-x: 0%; }
+}
+
+/* -- loading-more spinner -------------------------------------------------- */
+.pds-table-spinner {
+  inline-size: var(--pds-sp-5);
+  block-size: var(--pds-sp-5);
+  border: 3px solid var(--pds-line);
+  border-block-start-color: var(--pds-primary);
+  border-radius: var(--pds-r-pill);
+  animation: pds-table-spin 0.7s linear infinite;
+}
+@keyframes pds-table-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* honour reduced-motion: keep the states legible, drop the animation */
+@media (prefers-reduced-motion: reduce) {
+  .pds-table-skeleton__row,
+  .pds-table-spinner {
+    animation: none;
+  }
+}
+
+/* -- bulk bar (selection mount) -------------------------------------------- */
+.pds-bulk-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--pds-sp-3);
+  padding-block: var(--pds-sp-2);
+  padding-inline: var(--pds-sp-4);
+  background: var(--pds-panel);
+  border: 1px solid var(--pds-line);
+  border-radius: var(--pds-r-lg);
+  box-shadow: var(--pds-shadow);
+  color: var(--pds-ink);
+}
+.pds-bulk-bar[hidden] {
+  display: none;
+}
+.pds-bulk-bar__count {
+  font-weight: var(--pds-fw-bold);
+  color: var(--pds-ink);
+  margin-inline-end: var(--pds-sp-2);
+}
