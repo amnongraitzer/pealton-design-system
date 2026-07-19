@@ -210,9 +210,13 @@ Three rungs, by destructiveness:
    requires **typed-count confirmation** (the user types the number to
    proceed) before the action executes.
 
+- GIVEN a normal (non-destructive) edit, WHEN the user commits it, THEN it
+  takes effect on the explicit **✓** with no extra dialog (rung 1).
+- GIVEN a destructive **single-row** action, WHEN the user triggers it, THEN a
+  **confirm dialog** appears and the action executes only on confirm (rung 2).
 - GIVEN a destructive bulk action targets N rows, WHEN the confirm dialog
   opens, THEN it displays the exact count N and blocks submission until the
-  user types N to confirm.
+  user types N to confirm (rung 3).
 
 ---
 
