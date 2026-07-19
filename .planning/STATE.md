@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 Phase: 6 of 9 complete (v1.0 Design System shipped)
 Plan: — (no plan in flight)
 Status: Initialized from existing code — ready to plan Phase 7 when chosen
-Last activity: 2026-07-18 — Completed quick task 260718-fwv: inline-SVG icon component (issue #3 / PLT-068)
+Last activity: 2026-07-19 — Completed quick task 260719-d9g: TABLE-CONTRACT.md table behaviour contract (issue #5 / PLT-079)
 
 Progress: [██████▓░░░] 67%
 
@@ -70,6 +70,7 @@ None yet.
 | # | Description | Date | Commit | Directory |
 |---|-------------|------|--------|-----------|
 | 260718-fwv | Inline-SVG icon component (Jinja macro + docs render) — issue #3 / PLT-068 | 2026-07-18 | 130109d | [260718-fwv-add-an-inline-svg-icon-component-jinja-m](./quick/260718-fwv-add-an-inline-svg-icon-component-jinja-m/) |
+| 260719-d9g | TABLE-CONTRACT.md — written table behaviour contract for Epic 3 — issue #5 / PLT-079 | 2026-07-19 | a4f424d | [260719-d9g-create-docs-table-contract-md-written-ta](./quick/260719-d9g-create-docs-table-contract-md-written-ta/) |
 
 ## Deferred Items
 
