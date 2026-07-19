@@ -9,8 +9,9 @@
  * What it gives every table (contract: docs/TABLE-CONTRACT.md):
  *   - the DS `pds-tabulator` theme, RTL by default, virtual vertical scroll,
  *     and NO pagination (progressive-scroll model);
+ *   - the four contract states via ONE overlay — loading skeleton, per-view
+ *     empty, error + retry, loading-more indicator;
  *   - a selection API + bulk-bar mount whose count label renders "N נבחרו".
- *   (State overlay — skeleton / empty / error / loading-more — added in Task 2.)
  *
  * Security: a single `escapeHtml` helper escapes ALL text this wrapper injects
  * into the DOM — caller state copy and built-in formatters both route through it
@@ -51,7 +52,7 @@
 
   /* -- createPdsTable(el, options) -------------------------------------------
    * Initialise a DS-themed Tabulator on `el` and return a controller exposing
-   * the selection API (Task 2 attaches the state methods to this same object). */
+   * the selection API and the state (setState) methods. */
   function createPdsTable(el, options) {
     options = options || {};
 
@@ -70,9 +71,9 @@
      * so the element MUST carry `pds-tabulator` (Tabulator adds `.tabulator`). */
     element.classList.add("pds-tabulator");
 
-    /* The overlay (Task 2) is absolutely positioned over the table, so the host
-     * element needs a positioning context. The CSS also sets this; we set it
-     * here so it holds even if the stylesheet load order ever changes. */
+    /* The overlay is absolutely positioned over the table, so the host element
+     * needs a positioning context. The CSS also sets this; we set it here so it
+     * holds even if the stylesheet load order ever changes. */
     if (getComputedStyle(element).position === "static") {
       element.style.position = "relative";
     }
@@ -178,14 +179,125 @@
       }
     });
 
-    /* -- controller ----------------------------------------------------------
-     * Task 2 attaches setState + the show* state methods onto this same object. */
+    /* -- state overlay -------------------------------------------------------
+     * ONE overlay layered over the table container. setState swaps its content;
+     * it never mutates Tabulator's own row markup, so states compose on top of
+     * the themed table. Initially hidden (ready). */
+    var overlay = makeEl("div", "pds-table-overlay");
+    overlay.hidden = true;
+    element.appendChild(overlay);
+
+    // Default, non-business fallbacks. Real copy is per-view, supplied by the
+    // caller (contract: empty message is view-specific, not a baked generic).
+    var defaultEmptyText = options.emptyText || "No items to show";
+    var defaultErrorText = options.errorText || "Something went wrong";
+    var defaultOnRetry = options.onRetry;
+
+    function clearOverlay() {
+      overlay.textContent = "";
+    }
+
+    // loading: skeleton placeholder rows in place of real rows (first load).
+    function renderSkeleton() {
+      clearOverlay();
+      var skeleton = makeEl("div", "pds-table-skeleton");
+      for (var i = 0; i < 6; i++) {
+        skeleton.appendChild(makeEl("div", "pds-table-skeleton__row"));
+      }
+      overlay.appendChild(skeleton);
+    }
+
+    // empty: per-view copy (escaped). No Hebrew business string baked in.
+    function renderEmpty(text) {
+      clearOverlay();
+      var box = makeEl("div", "pds-table-state pds-table-state--empty");
+      var msg = makeEl("p", "pds-table-state__msg");
+      msg.innerHTML = escapeHtml(text == null ? defaultEmptyText : text);
+      box.appendChild(msg);
+      overlay.appendChild(box);
+    }
+
+    // error: copy (escaped) + a retry button that invokes the caller callback.
+    function renderError(text, onRetry) {
+      clearOverlay();
+      var box = makeEl("div", "pds-table-state pds-table-state--error");
+      var msg = makeEl("p", "pds-table-state__msg");
+      msg.innerHTML = escapeHtml(text == null ? defaultErrorText : text);
+      box.appendChild(msg);
+
+      var retry = makeEl("button", "pds-btn pds-btn--primary pds-table-retry");
+      retry.type = "button";
+      retry.textContent = options.retryText ? String(options.retryText) : "Retry";
+      var cb = typeof onRetry === "function" ? onRetry : defaultOnRetry;
+      retry.addEventListener("click", function () {
+        if (typeof cb === "function") cb();
+      });
+      box.appendChild(retry);
+      overlay.appendChild(box);
+    }
+
+    // loading-more: a small spinner near the loaded edge that does NOT hide the
+    // already-loaded rows (contract: progressive-load partial indicator).
+    function renderLoadingMore() {
+      clearOverlay();
+      var box = makeEl("div", "pds-table-state pds-table-state--more");
+      box.appendChild(makeEl("span", "pds-table-spinner"));
+      overlay.appendChild(box);
+    }
+
+    /* setState(name): the five contract states — loading / empty / error /
+     * loading-more / ready. Any other name hides the overlay so a typo never
+     * leaves a stale layer up. */
+    function setState(name) {
+      if (name === "ready") {
+        clearOverlay();
+        overlay.hidden = true;
+        overlay.classList.remove("pds-table-overlay--passthrough");
+        return;
+      }
+      overlay.hidden = false;
+      // loading-more must not cover the rows — it's a passthrough layer.
+      overlay.classList.toggle(
+        "pds-table-overlay--passthrough",
+        name === "loading-more"
+      );
+      if (name === "loading") return renderSkeleton();
+      if (name === "empty") return renderEmpty();
+      if (name === "error") return renderError();
+      if (name === "loading-more") return renderLoadingMore();
+      // unknown name: hide again rather than showing a blank overlay.
+      overlay.hidden = true;
+    }
+
+    // Thin convenience wrappers that also carry per-call text / callbacks.
+    function showLoading() {
+      setState("loading");
+    }
+    function showEmpty(text) {
+      overlay.hidden = false;
+      overlay.classList.remove("pds-table-overlay--passthrough");
+      renderEmpty(text);
+    }
+    function showError(text, onRetry) {
+      overlay.hidden = false;
+      overlay.classList.remove("pds-table-overlay--passthrough");
+      renderError(text, onRetry);
+    }
+    function showLoadingMore() {
+      setState("loading-more");
+    }
+    function showReady() {
+      setState("ready");
+    }
+
+    /* -- controller ----------------------------------------------------------- */
     function destroy() {
       try {
         table.destroy();
       } catch (e) {
         /* Tabulator already torn down — nothing to do. */
       }
+      if (overlay.parentNode) overlay.parentNode.removeChild(overlay);
     }
 
     return {
@@ -194,6 +306,13 @@
       getSelectedIds: getSelectedIds,
       clearSelection: clearSelection,
       bulkBar: bulkBar,
+      // state
+      setState: setState,
+      showLoading: showLoading,
+      showEmpty: showEmpty,
+      showError: showError,
+      showLoadingMore: showLoadingMore,
+      showReady: showReady,
       // lifecycle
       destroy: destroy,
     };
