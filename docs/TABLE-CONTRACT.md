@@ -20,6 +20,16 @@ future adopters only, not covered by this contract. **PLT-089** (close-out
 audit) later reconciles this document to the as-built system once adoption
 tasks PLT-080..088 land.
 
+**Rendering safety (cross-cutting, applies to every section below):**
+
+- GIVEN a table cell renders candidate text (name, role, notes, branch names,
+  or any field sourced from external email/ingest), WHEN a formatter produces
+  cell HTML, THEN that text is **HTML-escaped** before insertion — a Tabulator
+  formatter that returns a string inserts it as HTML, so every value (not only
+  chips/phones) is escaped. This upholds the project security posture (macros
+  and formatters HTML-escape all text; no unescaped external data reaches the
+  DOM), and is a mandatory acceptance check for every adoption task.
+
 ---
 
 ## States
@@ -42,6 +52,11 @@ tasks PLT-080..088 land.
   focus moves up/down between rows (row focus/arrow movement).
 - GIVEN a row has focus, WHEN the user presses **Enter**, THEN the detail
   drawer opens for that row.
+- GIVEN a row is clicked with the pointer, WHEN the click lands on the row
+  body, THEN the detail drawer opens; WHEN the click lands on the **row-select
+  checkbox** or an in-row **action button** (e.g. the assign button), THEN the
+  drawer does **NOT** open — the control's own action fires instead (existing
+  console.js suppression rule, carried forward).
 - GIVEN any open drawer or inline-edit control, WHEN the user presses **Esc**,
   THEN the control closes/cancels without committing a change (Esc rules
   apply uniformly to drawer and inline edit).
