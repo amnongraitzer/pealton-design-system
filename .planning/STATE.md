@@ -71,6 +71,7 @@ None yet.
 |---|-------------|------|--------|-----------|
 | 260718-fwv | Inline-SVG icon component (Jinja macro + docs render) — issue #3 / PLT-068 | 2026-07-18 | 130109d | [260718-fwv-add-an-inline-svg-icon-component-jinja-m](./quick/260718-fwv-add-an-inline-svg-icon-component-jinja-m/) |
 | 260719-d9g | TABLE-CONTRACT.md — written table behaviour contract for Epic 3 — issue #5 / PLT-079 | 2026-07-19 | a4f424d | [260719-d9g-create-docs-table-contract-md-written-ta](./quick/260719-d9g-create-docs-table-contract-md-written-ta/) |
+| 260719-fp4 | pds-table core — createPdsTable Tabulator wrapper (theme/RTL/virtual, contract states, selection + bulk-bar) — issue #7 / PLT-080 | 2026-07-19 | 793f340 | [260719-fp4-implement-plt-080-pds-table-core-tabulat](./quick/260719-fp4-implement-plt-080-pds-table-core-tabulat/) |
 
 ## Deferred Items
 

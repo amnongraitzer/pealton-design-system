@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pealton Design System — pds-table (states + selection) · PLT-080</title>
+  <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/components.css">
+  <!-- Tabulator base FIRST, then the DS theme so token overrides win (docs-only vendored copy, v6.3.1) -->
+  <link rel="stylesheet" href="vendor/tabulator/tabulator.min.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/tabulator.css">
+  <style>
+    body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
+           margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
+    h1 { font-size: var(--pds-fs-7); font-weight: var(--pds-fw-heavy); margin: 0 0 var(--pds-sp-2); }
+    .lede { color: var(--pds-ink-soft); max-width: 62ch; margin: 0 0 var(--pds-sp-5); }
+    .demo-row { display: flex; flex-wrap: wrap; gap: var(--pds-sp-3); align-items: center;
+                margin: var(--pds-sp-3) 0; }
+    .demo-label { width: 100%; font-size: var(--pds-fs-1); color: var(--pds-ink-faint);
+                  font-weight: var(--pds-fw-medium); margin-top: var(--pds-sp-3); }
+    #demo-table { max-width: 760px; min-height: 260px; margin-top: var(--pds-sp-3); }
+    #demo-bulkbar { max-width: 760px; margin-top: var(--pds-sp-3); }
+  </style>
+</head>
+<body>
+  <!-- NOTE (honest verification): there is NO headless browser in-sandbox, so
+       "zero console errors" cannot be asserted at runtime here. This page is
+       verified DOM-structurally by tests/test_table_module.py (it asserts the
+       page references the module, createPdsTable, the demoed states, and a
+       bulk-bar mount). Open it in a real browser to see the live behaviour. -->
+
+  <h1>pds-table — states &amp; selection</h1>
+  <p class="lede">The DS themed Tabulator wrapper. RTL, virtual scroll, no
+    pagination. Use the buttons to drive the four contract states; select rows to
+    see the "N נבחרו" bulk bar with a clear control and one demo action.</p>
+
+  <div class="demo-label">state controls</div>
+  <div class="demo-row">
+    <button class="pds-btn" id="btn-loading" type="button">טעינה (skeleton)</button>
+    <button class="pds-btn" id="btn-empty" type="button">ריק (empty)</button>
+    <button class="pds-btn" id="btn-error" type="button">שגיאה + נסה שוב</button>
+    <button class="pds-btn" id="btn-more" type="button">טוען עוד</button>
+    <button class="pds-btn pds-btn--primary" id="btn-ready" type="button">מוכן (ready)</button>
+  </div>
+
+  <div id="demo-table"></div>
+
+  <div class="demo-label">selection bulk bar (hidden until rows are selected)</div>
+  <div id="demo-bulkbar" hidden></div>
+
+  <!-- Tabulator base JS (docs-only vendored copy, v6.3.1) -->
+  <script src="vendor/tabulator/tabulator.min.js"></script>
+  <!-- DS table wrapper -->
+  <script src="../pealton_design_system/static/pds-table.js"></script>
+  <script>
+    (function () {
+      // Generic, app-agnostic placeholder rows — NOT real HR data / endpoints.
+      var rows = [
+        { id: 1, title: "פריט א׳", owner: "אלכס" },
+        { id: 2, title: "פריט ב׳", owner: "בר" },
+        { id: 3, title: "פריט ג׳", owner: "גל" },
+        { id: 4, title: "פריט ד׳", owner: "דנה" },
+        { id: 5, title: "פריט ה׳", owner: "עדן" }
+      ];
+
+      var bulk = document.getElementById("demo-bulkbar");
+
+      var ctl = createPdsTable("#demo-table", {
+        idField: "id",
+        data: rows,
+        bulkBar: "#demo-bulkbar",
+        emptyText: "אין פריטים להצגה בתצוגה זו",
+        errorText: "טעינת הנתונים נכשלה",
+        retryText: "נסה שוב",
+        columns: [
+          { title: "פריט", field: "title", widthGrow: 2 },
+          { title: "אחראי", field: "owner", widthGrow: 1 }
+        ],
+        onSelectionChange: function (sel) {
+          // The DS renders the "N נבחרו" count + we render OUR OWN action here:
+          // a clear control and one demo consumer action button.
+          var extra = bulk.querySelector(".demo-actions");
+          if (!extra) {
+            extra = document.createElement("span");
+            extra.className = "demo-actions";
+            extra.style.display = "inline-flex";
+            extra.style.gap = "var(--pds-sp-2)";
+
+            var clearBtn = document.createElement("button");
+            clearBtn.type = "button";
+            clearBtn.className = "pds-btn pds-btn--ghost pds-btn--sm";
+            clearBtn.textContent = "נקה";
+            clearBtn.addEventListener("click", function () { sel.clear(); });
+
+            var actionBtn = document.createElement("button");
+            actionBtn.type = "button";
+            actionBtn.className = "pds-btn pds-btn--primary pds-btn--sm";
+            actionBtn.textContent = "פעולה על הנבחרים";
+            actionBtn.addEventListener("click", function () {
+              // Demo only — consumer action would act on sel.selectedIds.
+              window.alert("נבחרו: " + sel.selectedIds.join(", "));
+            });
+
+            extra.appendChild(clearBtn);
+            extra.appendChild(actionBtn);
+            bulk.appendChild(extra);
+          }
+        }
+      });
+
+      // Wire the state control buttons to the controller.
+      document.getElementById("btn-loading").addEventListener("click", function () { ctl.showLoading(); });
+      document.getElementById("btn-empty").addEventListener("click", function () { ctl.showEmpty(); });
+      document.getElementById("btn-error").addEventListener("click", function () {
+        ctl.showError(undefined, function () { ctl.showReady(); });
+      });
+      document.getElementById("btn-more").addEventListener("click", function () { ctl.showLoadingMore(); });
+      document.getElementById("btn-ready").addEventListener("click", function () { ctl.showReady(); });
+    })();
+  </script>
+</body>
+</html>
