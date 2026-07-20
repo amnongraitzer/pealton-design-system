@@ -23,7 +23,7 @@ See: .planning/PROJECT.md (updated 2026-07-18)
 Phase: 6 of 9 complete (v1.0 Design System shipped)
 Plan: — (no plan in flight)
 Status: Initialized from existing code — ready to plan Phase 7 when chosen
-Last activity: 2026-07-19 — Completed quick task 260719-mi0: inline-edit module — standalone createFieldEditor + pds-table cell wiring (issue #9 / PLT-081)
+Last activity: 2026-07-20 — Completed quick task 260720-e12: adopt Web Awesome Free (MIT), vendored + DS-themed + RTL (issue #11 / PLT-099, Epic 5 phase 1)
 
 Progress: [██████▓░░░] 67%
 
@@ -73,6 +73,7 @@ None yet.
 | 260719-d9g | TABLE-CONTRACT.md — written table behaviour contract for Epic 3 — issue #5 / PLT-079 | 2026-07-19 | a4f424d | [260719-d9g-create-docs-table-contract-md-written-ta](./quick/260719-d9g-create-docs-table-contract-md-written-ta/) |
 | 260719-fp4 | pds-table core — createPdsTable Tabulator wrapper (theme/RTL/virtual, contract states, selection + bulk-bar) — issue #7 / PLT-080 | 2026-07-19 | 793f340 | [260719-fp4-implement-plt-080-pds-table-core-tabulat](./quick/260719-fp4-implement-plt-080-pds-table-core-tabulat/) |
 | 260719-mi0 | inline-edit module — standalone createFieldEditor factory (✓/✕, Enter/Esc, busy, 409-conflict) + pds-table editable-column seam — issue #9 / PLT-081 | 2026-07-19 | 45f6032 | [260719-mi0-implement-plt-081-inline-edit-module-sta](./quick/260719-mi0-implement-plt-081-inline-edit-module-sta/) |
+| 260720-e12 | Web Awesome Free (MIT, v3.10.0) adopted — vendored bundle (select/option/dialog/input/button) + WA base CSS, DS theme layer (--wa-* → --pds-*), RTL searchable-multiselect + dialog demo, consumer doc, source-level tests — issue #11 / PLT-099 (Epic 5 phase 1) | 2026-07-20 | 51e802d | [260720-e12-adopt-web-awesome-free-mit-vendored-into](./quick/260720-e12-adopt-web-awesome-free-mit-vendored-into/) |
 
 ## Deferred Items
 
