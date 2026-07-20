@@ -1,0 +1,82 @@
+/* ============================================================================
+ * Pealton Design System — Web Awesome theme layer (PLT-099, Epic 5 phase 1)
+ *
+ * A THEME layer, not a fork. Load order on any page/app:
+ *   1. webawesome.base.css   — Web Awesome's own light-theme --wa-* defaults
+ *   2. webawesome.css        — THIS file: re-points the key --wa-* onto --pds-*
+ *   3. webawesome.bundle.js  — registers the custom elements (module script)
+ *
+ * Web Awesome components read every design decision from cascading --wa-*
+ * custom properties (they inherit through shadow DOM), so overriding those
+ * variables here is enough to make wa-select / wa-dialog / wa-input / wa-button
+ * inherit the Monday-inspired Pealton look — no per-component CSS overrides.
+ *
+ * Because this file loads AFTER the base theme, these :root declarations win.
+ * Colour / type / radius come from --pds-* tokens ONLY (no raw hex; the single
+ * keyword `white` is allowed — it is the on-brand text colour on the purple
+ * fill, matching Web Awesome's own default for that token). RTL needs no work
+ * here: WA components use logical properties and honour the ancestor `dir`.
+ *
+ * Token names below were read from the vendored webawesome.base.css — every
+ * --wa-* here is a variable that file actually defines.
+ * ========================================================================== */
+
+:root {
+  /* -- Brand (the one Monday purple accent) -------------------------------- */
+  --wa-color-brand-fill-loud:   var(--pds-primary);        /* solid buttons, selected */
+  --wa-color-brand-fill-normal: var(--pds-primary);
+  --wa-color-brand-fill-quiet:  var(--pds-primary-wash);   /* subtle tint backgrounds */
+  --wa-color-brand-on-loud:     white;                     /* text on the purple fill */
+  --wa-color-brand-on-normal:   white;
+  --wa-color-brand-on-quiet:    var(--pds-primary-ink);
+  --wa-color-brand-on:          white;
+  --wa-color-brand-border-loud:   var(--pds-primary-ink);
+  --wa-color-brand-border-normal: var(--pds-primary);
+  --wa-color-brand-border-quiet:  var(--pds-primary-wash);
+
+  /* -- Surfaces + lines ---------------------------------------------------- */
+  --wa-color-surface-default: var(--pds-panel);            /* cards, dialog body   */
+  --wa-color-surface-raised:  var(--pds-panel);            /* dialog / popover      */
+  --wa-color-surface-lowered: var(--pds-panel-2);          /* inset / striped       */
+  --wa-color-surface-border:  var(--pds-line);
+
+  /* -- Neutral family (default buttons, quiet chrome) ---------------------- */
+  --wa-color-neutral-fill-quiet:  var(--pds-panel-2);
+  --wa-color-neutral-fill-normal: var(--pds-line-soft);
+  --wa-color-neutral-fill-loud:   var(--pds-ink-soft);
+  --wa-color-neutral-border-quiet:  var(--pds-line);
+  --wa-color-neutral-border-normal: var(--pds-line);
+  --wa-color-neutral-on-normal: var(--pds-ink);
+  --wa-color-neutral-on-loud:   white;
+
+  /* -- Text ---------------------------------------------------------------- */
+  --wa-color-text-normal: var(--pds-ink);
+  --wa-color-text-quiet:  var(--pds-ink-soft);
+  --wa-color-text-link:   var(--pds-primary);
+
+  /* -- Focus ring ---------------------------------------------------------- */
+  --wa-color-focus: var(--pds-primary);
+
+  /* -- Type ---------------------------------------------------------------- */
+  --wa-font-family-body:     var(--pds-font);
+  --wa-font-family-heading:  var(--pds-font);
+  --wa-font-family-longform: var(--pds-font);
+  --wa-font-size-s: var(--pds-fs-2);
+  --wa-font-size-m: var(--pds-fs-3);
+  --wa-font-size-l: var(--pds-fs-4);
+
+  /* -- Radius -------------------------------------------------------------- */
+  --wa-border-radius-s:    var(--pds-r-sm);
+  --wa-border-radius-m:    var(--pds-r);
+  --wa-border-radius-l:    var(--pds-r-lg);
+  --wa-border-radius-pill: var(--pds-r-pill);
+
+  /* -- Form controls (wa-input / wa-select shell) -------------------------- */
+  --wa-form-control-background-color: var(--pds-panel);
+  --wa-form-control-border-color:     var(--pds-line);
+  --wa-form-control-border-radius:    var(--pds-r);
+  --wa-form-control-value-color:      var(--pds-ink);
+  --wa-form-control-placeholder-color: var(--pds-ink-faint);
+  --wa-form-control-label-color:      var(--pds-ink-soft);
+  --wa-form-control-activated-color:  var(--pds-primary);
+}
