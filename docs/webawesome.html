@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Pealton Design System — Web Awesome (multi-select + dialog) · PLT-099</title>
+  <link rel="stylesheet" href="../pealton_design_system/static/fonts.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/tokens.css">
+  <!-- Web Awesome base theme FIRST (its --wa-* defaults), then the DS layer so
+       our token overrides win. Both are vendored — no CDN, no autoloader. -->
+  <link rel="stylesheet" href="../pealton_design_system/static/webawesome.base.css">
+  <link rel="stylesheet" href="../pealton_design_system/static/webawesome.css">
+  <style>
+    body { font-family: var(--pds-font); background: var(--pds-bg); color: var(--pds-ink);
+           margin: 0; padding: var(--pds-sp-6); line-height: var(--pds-lh); }
+    h1 { font-size: var(--pds-fs-7); font-weight: var(--pds-fw-heavy); margin: 0 0 var(--pds-sp-2); }
+    h2 { font-size: var(--pds-fs-5); font-weight: var(--pds-fw-bold); margin: var(--pds-sp-6) 0 var(--pds-sp-2); }
+    .lede { color: var(--pds-ink-soft); max-width: 62ch; margin: 0 0 var(--pds-sp-5); }
+    .demo-card { background: var(--pds-panel); border: 1px solid var(--pds-line);
+                 border-radius: var(--pds-r-lg); padding: var(--pds-sp-5);
+                 max-width: 520px; box-shadow: var(--pds-shadow); }
+    .demo-label { font-size: var(--pds-fs-1); color: var(--pds-ink-faint);
+                  font-weight: var(--pds-fw-medium); margin: 0 0 var(--pds-sp-2); }
+    wa-input { display: block; margin-block-end: var(--pds-sp-2); }
+    wa-select { display: block; }
+    #picked { margin-block-start: var(--pds-sp-3); font-size: var(--pds-fs-2);
+              color: var(--pds-ink-soft); }
+  </style>
+</head>
+<body>
+  <!-- NOTE (honest verification): there is NO headless browser in-sandbox, so
+       "zero console errors" cannot be asserted at runtime here. This page is
+       verified DOM-structurally by tests/test_webawesome.py (it asserts the page
+       loads the vendored base→DS-theme→bundle in order and renders the two proven
+       controls). Open it in a real browser to see the live behaviour: the
+       multi-select filters as you type, and the dialog opens/closes. -->
+
+  <h1>Web Awesome — DS-themed</h1>
+  <p class="lede">Vendored Web Awesome Free (MIT) components, themed onto the
+    Pealton tokens and running RTL. Two controls Epic 5 needs are proven here: a
+    <strong>searchable multi-select</strong> (for לשיוך) and a <strong>dialog</strong>
+    (for confirms). No CDN and no build step — the assets load exactly like
+    <code>tokens.css</code>.</p>
+
+  <!-- (1) SEARCHABLE MULTI-SELECT -------------------------------------------
+       Web Awesome Free 3.10 has `multiple` but NO built-in search attribute, so
+       the DS adds a THIN filter: the wa-input below toggles the `hidden`
+       attribute on each wa-option whose label does not contain the query. This
+       is DS glue over vendored WA parts — analogous to pds-table.js over
+       Tabulator. Keep it small and inline. -->
+  <h2>שיוך — בחירה מרובה עם חיפוש</h2>
+  <div class="demo-card">
+    <p class="demo-label">הקלד/י כדי לסנן, ובחר/י אחד או יותר</p>
+    <wa-input id="assignee-filter" placeholder="חיפוש…" clearable>
+    </wa-input>
+    <wa-select id="assignee-select" multiple placeholder="בחר/י משויכים">
+      <wa-option value="alex">אלכס לוי</wa-option>
+      <wa-option value="bar">בר כהן</wa-option>
+      <wa-option value="gal">גל אברהם</wa-option>
+      <wa-option value="dana">דנה מזרחי</wa-option>
+      <wa-option value="eden">עדן פרץ</wa-option>
+      <wa-option value="noa">נועה שרון</wa-option>
+      <wa-option value="yossi">יוסי בן-דוד</wa-option>
+    </wa-select>
+    <div id="picked">לא נבחרו משויכים</div>
+  </div>
+
+  <!-- (2) DIALOG ------------------------------------------------------------
+       A wa-button opens a wa-dialog by setting its `open` property. The dialog
+       carries a label (title), body copy, and a footer close button. -->
+  <h2>אישור — דיאלוג</h2>
+  <div class="demo-card">
+    <p class="demo-label">דיאלוג אישור מובנה של Web Awesome, בעיצוב ה-DS</p>
+    <wa-button id="open-dialog" variant="brand">פתח/י אישור</wa-button>
+  </div>
+
+  <wa-dialog id="confirm-dialog" label="אישור פעולה">
+    האם לשייך את הפריטים שנבחרו? ניתן לבטל בכל שלב.
+    <wa-button slot="footer" id="dialog-close" variant="brand">הבנתי</wa-button>
+  </wa-dialog>
+
+  <!-- Vendored bundle: registers wa-select/wa-option/wa-dialog/wa-input/wa-button.
+       Module script — no CDN, no autoloader. -->
+  <script type="module" src="../pealton_design_system/static/webawesome.bundle.js"></script>
+
+  <script type="module">
+    // Wait for the custom elements to be defined before wiring behaviour.
+    await Promise.allSettled([
+      customElements.whenDefined('wa-select'),
+      customElements.whenDefined('wa-input'),
+      customElements.whenDefined('wa-dialog'),
+      customElements.whenDefined('wa-button'),
+    ]);
+
+    // (1) DS "searchable" glue: filter the options by the input query. WA Free
+    // has no built-in search, so we toggle `hidden` on non-matching options.
+    const filter = document.getElementById('assignee-filter');
+    const select = document.getElementById('assignee-select');
+    const picked = document.getElementById('picked');
+    const options = Array.from(select.querySelectorAll('wa-option'));
+
+    filter.addEventListener('input', () => {
+      const q = (filter.value || '').trim().toLowerCase();
+      for (const opt of options) {
+        const label = (opt.textContent || '').toLowerCase();
+        opt.hidden = q.length > 0 && !label.includes(q);
+      }
+    });
+
+    // Reflect the current selection as plain text (demo only).
+    select.addEventListener('change', () => {
+      const value = select.value;                 // array when `multiple`
+      const chosen = Array.isArray(value) ? value : (value ? [value] : []);
+      picked.textContent = chosen.length
+        ? 'נבחרו: ' + chosen.join(', ')
+        : 'לא נבחרו משויכים';
+    });
+
+    // (2) Dialog open/close.
+    const dialog = document.getElementById('confirm-dialog');
+    document.getElementById('open-dialog').addEventListener('click', () => { dialog.open = true; });
+    document.getElementById('dialog-close').addEventListener('click', () => { dialog.open = false; });
+  </script>
+</body>
+</html>
